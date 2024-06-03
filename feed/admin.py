@@ -4,7 +4,7 @@ from feed.models import Post, Comment, Photo, Like
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('user', "created")
+    list_display = ('user', "created", "id")
     list_filter = ('user', "created")
 
 

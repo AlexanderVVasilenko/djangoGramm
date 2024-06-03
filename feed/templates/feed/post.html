@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+</head>
+<body>
+    <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
+    <h5 class="mt-0">{{ object.user.username }}</h5>
+    <p>{{ object.description }}</p>
+    <!-- Display Photos -->
+    {% for photo in object.photo_set.all %}
+        <img src="{{ photo.url }}" alt="Post Image" style="width: 100%;">
+    {% endfor %}
+
+    <!-- Display Comments -->
+    <h6>Comments</h6>
+    {% for comment in object.comment_set.all %}
+        <img src="{{ comment.user.avatar.url }}" class="mr-3 rounded-circle" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
+        <h6>{{ comment.user.username }}</h6>
+        <p>{{ comment.text }}</p>
+    {% endfor %}
+
+    <!-- Display Likes -->
+    <h6>Likes</h6>
+    <p>{{ object.like_set.count }} likes</p>
+    </body>
+</html>
