@@ -29,7 +29,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True)
     name = models.CharField(max_length=30)
     bio = models.TextField()
-    avatar = models.ImageField(upload_to='user_profile/avatars/')
+    avatar = models.ImageField(upload_to='avatars')
     following = models.ManyToManyField('User', related_name='followers', blank=True)
     is_staff = models.BooleanField(default=False)
 
