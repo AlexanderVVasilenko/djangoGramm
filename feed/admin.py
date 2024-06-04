@@ -6,6 +6,8 @@ from feed.models import Post, Comment, Photo, Like
 class PostAdmin(admin.ModelAdmin):
     list_display = ('user', "created", "id")
     list_filter = ('user', "created")
+    search_fields = ('user__username',)
+    date_hierarchy = 'created'
 
 
 class CommentAdmin(admin.ModelAdmin):

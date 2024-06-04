@@ -4,6 +4,7 @@ from django.views.generic import DetailView
 from django.views.generic.list import ListView
 
 from feed.models import Post
+from user_profile.models import User
 
 
 class PostListView(ListView):
@@ -16,5 +17,6 @@ class PostDetailView(DetailView):
     template_name = 'feed/post.html'
 
 
-def profile(request, username=None):
-    return HttpResponse("")
+class ProfileView(DetailView):
+    model = User
+    template_name = "feed/profile.html"
