@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,11 @@
 <body>
     <h1>User Profile</h1>
     <div class="profile-info">
-        <img src="{{ object.avatar.url }}" alt="User Avatar">
+        {% if object.avatar %}
+            <img src="{{ object.avatar.url }}" alt="User Avatar">
+        {% else %}
+            <img src="{% static 'feed/images/default.png' %}" alt="{{ object.name }}" style="width: 64px; height: 64px; border: 4px;">
+        {% endif %}
         <h2>{{ object.name }}</h2>
         <p>{{ object.bio }}</p>
     </div>

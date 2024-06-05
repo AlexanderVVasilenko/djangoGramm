@@ -3,8 +3,8 @@ from django.urls import path
 from user_profile import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path("<my_username>", views.my_profile, name='my_profile'),
-    path("emailsignup", views.login, name='login'),
-    path("<my_username>/settings", views.settings, name='settings'),
+    path('', views.LoginView.as_view(), name='index'),
+    path("<str:my_username>", views.ProfileView.as_view(), name='my_profile'),
+    path("emailsignup", views.login, name='signup'),
+    path("accounts/edit", views.ProfileEditView.as_view(), name='settings'),
 ]

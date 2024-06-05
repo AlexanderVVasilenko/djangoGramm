@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }} • DjangoGramm</title>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            {% if object.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar">
+            {% else %}
+                <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" style="width: 64px; height: 64px; border: 4px;">
+            {% endif %}
+            <div>
+                <div class="username">{{ user.username }}</div>
+                <div class="bio">{{ user.bio }}</div>
+            </div>
+        </div>
+        <div class="profile-content">
+            <div class="row">
+                {% for post in posts %}
+                <div class="col-4">
+                    <img src="{{ post.image.url }}" alt="Post image">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
