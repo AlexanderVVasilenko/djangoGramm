@@ -8,8 +8,8 @@
 <body>
     <div class="container">
         <div class="profile-header">
-            {% if object.avatar %}
-                <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar">
+            {% if user.avatar %}
+                <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar" style="width: 64px; height: 64px; border: 4px;">
             {% else %}
                 <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" style="width: 64px; height: 64px; border: 4px;">
             {% endif %}

@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-zw$-q6d6h*&dzreapy2mhf9vje&l1rih-+99ex2=+6boxil=oo
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -72,7 +70,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangoGramm.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -82,7 +79,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -102,7 +98,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -113,7 +108,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -134,3 +128,13 @@ MEDIA_URL = '/media/'
 # Increase the default max upload size if necessary
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'  # Outlook.com SMTP server
+EMAIL_PORT = 587  # Outlook.com SMTP port
+EMAIL_USE_TLS = True  # Enable TLS encryption
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = 'djangogramm@outlook.com'  # Your Outlook.com email address
+EMAIL_HOST_PASSWORD = 'dam_v_popu'  # Your Outlook.com email password
+EMAIL_DEBUG = True

@@ -1,11 +1,14 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import PasswordResetView
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, UpdateView, CreateView
+from django.views.generic import TemplateView, UpdateView
 
+from djangoGramm import settings
 from feed.models import Post
 from user_profile.forms import AuthorForm, EditProfileForm
 from user_profile.models import User
@@ -51,6 +54,7 @@ class ProfileView(TemplateView):
         posts = Post.objects.filter(user=user)  # Assuming a Post model with a user field
         context['user'] = user
         context['posts'] = posts
+        print(user.avatar)
         return context
 
 
@@ -66,5 +70,37 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class ResetPasswordView(LoginRequiredMixin, PasswordResetView):
-    pass
+class ResetPasswordView(PasswordResetView):
+    template_name = "user_profile/password_reset.html"
+    form_class = PasswordResetForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {"form": form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save(
+                request=request,
+                use_https=request.is_secure(),
+                token_generator=default_token_generator,
+                from_email=settings.EMAIL_HOST_USER,
+                email_template_name='user_profile/password_reset_email.html',
+                subject_template_name="user_profile/password_reset_subject.txt"
+            )
+            return render(request, self.template_name, {
+                "form": self.form_class(),
+                "message": "We have sent you"
+            })
+
+        return render(request, self.template_name, {"form": form})
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = "user_profile/password_reset_confirm.html"
+    success_url = reverse_lazy('index')
+
+    def form_valid(self, form):
+        form.save()
+        return redirect(self.success_url)
