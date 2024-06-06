@@ -131,3 +131,6 @@ AUTH_USER_MODEL = 'user_profile.User'
 MEDIA_ROOT = BASE_DIR / "media/"
 MEDIA_URL = '/media/'
 
+# Increase the default max upload size if necessary
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
+FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary

@@ -1,25 +1,14 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth.views import PasswordResetView
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView, CreateView
 
 from feed.models import Post
 from user_profile.forms import AuthorForm, EditProfileForm
 from user_profile.models import User
-
-
-def index(request):
-    return "Hello World!"
-
-
-def my_profile(request):
-    return "Hello World!"
-
-
-def settings(request):
-    return "Hello World!"
 
 
 class LoginView(TemplateView):
@@ -30,7 +19,6 @@ class LoginView(TemplateView):
         return render(request, self.template_name, {"form": form})
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         form = AuthorForm(request.POST)
         print("Form errors:", form.errors)
         print(form.cleaned_data)
@@ -70,8 +58,13 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     template_name = "user_profile/edit_profile.html"
     form_class = EditProfileForm
     model = User
-    success_url = reverse_lazy("my_profile")
 
-    def get_object(self):
+    def get_success_url(self):
+        return reverse_lazy('my_profile', kwargs={'my_username': self.request.user.username})
+
+    def get_object(self, queryset=None):
         return self.request.user
 
+
+class ResetPasswordView(LoginRequiredMixin, PasswordResetView):
+    pass
