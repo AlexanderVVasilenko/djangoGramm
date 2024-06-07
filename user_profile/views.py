@@ -6,11 +6,11 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView, CreateView
 
 from djangoGramm import settings
 from feed.models import Post
-from user_profile.forms import AuthorForm, EditProfileForm
+from user_profile.forms import AuthorForm, EditProfileForm, SignUpForm
 from user_profile.models import User
 
 
@@ -104,3 +104,18 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     def form_valid(self, form):
         form.save()
         return redirect(self.success_url)
+
+
+class SignUpView(CreateView):
+    form_class = SignUpForm
+    template_name = "user_profile/sign_up.html"
+
+    def get_success_url(self):
+        return reverse_lazy('my_profile', kwargs={'my_username': self.object.username})
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.save()
+        login(self.request, user)
+        return response
+
