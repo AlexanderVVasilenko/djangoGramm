@@ -1,3 +1,5 @@
+# user_profile/views.py
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,7 +17,7 @@ from user_profile.models import User
 
 
 class LoginView(TemplateView):
-    template_name = "user_profile/index.html"
+    template_name = "user_profile/login.html"
 
     def get(self, request, *args, **kwargs):
         form = AuthorForm()
