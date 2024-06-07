@@ -3,22 +3,15 @@ from django.contrib import auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import DetailView, TemplateView, ListView
-from django.views.generic.list import MultipleObjectMixin
+from django.views.generic import DetailView, TemplateView
 
 from feed.models import Post
 from user_profile.forms import AuthorForm
-from user_profile.models import User
 
 
 class PostDetailView(DetailView):
     model = Post
     template_name = 'feed/post.html'
-
-
-class ProfileView(DetailView):
-    model = User
-    template_name = "feed/profile.html"
 
 
 class HomePageView(TemplateView):

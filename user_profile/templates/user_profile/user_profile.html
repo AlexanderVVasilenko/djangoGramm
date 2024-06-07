@@ -1,32 +1,12 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ user.username }} • DjangoGramm</title>
-</head>
-<body>
-    <div class="container">
-        <div class="profile-header">
-            {% if user.avatar %}
-                <img src="{{ user.avatar.url }}" alt="{{ user.username }}'s avatar" style="width: 64px; height: 64px; border: 4px;">
-            {% else %}
-                <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" style="width: 64px; height: 64px; border: 4px;">
-            {% endif %}
-            <div>
-                <div class="username">{{ user.username }}</div>
-                <div class="bio">{{ user.bio }}</div>
-            </div>
-        </div>
-        <div class="profile-content">
-            <div class="row">
-                {% for post in posts %}
-                <div class="col-4">
-                    <img src="{{ post.image.url }}" alt="Post image">
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+<h1>{{ user.username }}'s Profile</h1>
+
+  {% if is_owner %}
+    <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
+  {% endif %}
+
+  <h2>Posts</h2>
+  <ul>
+    {% for post in posts %}
+      <li>{{ post.title }}</li>
+    {% endfor %}
+  </ul>

@@ -8,7 +8,7 @@ from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmVie
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, UpdateView, CreateView
+from django.views.generic import TemplateView, UpdateView, CreateView, DetailView
 
 from djangoGramm import settings
 from feed.models import Post
@@ -46,17 +46,18 @@ class LoginView(TemplateView):
         return render(request, self.template_name, {"form": form})
 
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
     template_name = "user_profile/user_profile.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        username = self.kwargs['my_username']
+        username = self.kwargs['pk']
         user = get_object_or_404(User, username=username)
         posts = Post.objects.filter(user=user)  # Assuming a Post model with a user field
         context['user'] = user
         context['posts'] = posts
-        print(user.avatar)
+        context['is_owner'] = self.request.user == user  # Check if the logged-in user is viewing their own profile
         return context
 
 
@@ -66,7 +67,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     model = User
 
     def get_success_url(self):
-        return reverse_lazy('my_profile', kwargs={'my_username': self.request.user.username})
+        return reverse_lazy('profile', kwargs={'pk': self.request.user.username})
 
     def get_object(self, queryset=None):
         return self.request.user
