@@ -24,8 +24,8 @@
     </h5>
     <p>{{ object.description }}</p>
     <!-- Display Photos -->
-    {% for photo in object.photo_set.all %}
-        <img src="{{ photo.url }}" alt="Post Image" style="width: 100%;">
+    {% for photo in object.photos.all %}
+        <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
     {% endfor %}
 
     <!-- Display Comments -->
