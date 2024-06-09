@@ -1,3 +1,4 @@
+# user_profile/models.py
 from django.contrib.auth.models import PermissionsMixin, BaseUserManager, AbstractBaseUser
 from django.db import models
 

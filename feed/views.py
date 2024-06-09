@@ -74,9 +74,14 @@ class CreateCommentView(View):
             comment.post = post
             comment.save()
             referer = request.META.get('HTTP_REFERER', '')
-            if reverse('home') in referer:
-                return HttpResponseRedirect(reverse('home'))
-            elif reverse('post', kwargs={'pk': post_id}) in referer:
-                return HttpResponseRedirect(reverse('post', kwargs={'pk': post_id}))
 
-        return render(request, 'feed/post.html', {'object': post, 'comment_form': form})
+            if reverse('post', kwargs={'pk': post_id}) in referer:
+                return HttpResponseRedirect(reverse('post', kwargs={'pk': post_id}))
+            elif reverse('home') in referer:
+                return HttpResponseRedirect(reverse('home'))
+
+        context = {
+            'object': post,
+            'comment_form': form,
+        }
+        return render(request, 'feed/post.html', context)
