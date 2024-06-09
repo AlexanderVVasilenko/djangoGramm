@@ -1,4 +1,3 @@
-# user_profile/tests.py
 from django.urls import reverse
 import pytest
 

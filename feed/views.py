@@ -1,4 +1,3 @@
-# feed/views.py
 from django.contrib import auth
 from django.http import HttpResponseRedirect
 from django.shortcuts import render

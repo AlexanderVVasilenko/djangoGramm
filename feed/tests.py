@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from feed.models import Post, Comment
 
-# Ensure the settings are configured
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
 django.setup()
 

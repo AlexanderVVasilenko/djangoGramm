@@ -1,4 +1,3 @@
-# feed/forms.py
 from django import forms
 from feed.models import Comment
 
