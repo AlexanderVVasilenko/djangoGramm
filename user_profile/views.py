@@ -57,7 +57,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         username = self.kwargs['pk']
         user = get_object_or_404(User, username=username)
-        posts = Post.objects.filter(user=user)  # Assuming a Post model with a user field
+        posts = Post.objects.filter(user=user)
         context['user'] = user
         context['posts'] = posts
         context['is_owner'] = self.request.user == user  # Check if the logged-in user is viewing their own profile
@@ -115,7 +115,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 class SignUpView(CreateView):
     form_class = BasicSignUpForm
     template_name = "user_profile/sign_up.html"
-    success_url = reverse_lazy('confirmation_sent')  # Redirect to confirmation_sent view after successful registration
+    success_url = reverse_lazy('confirmation_sent')
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -138,7 +138,7 @@ class SignUpView(CreateView):
 
 
 class ConfirmEmailView(RedirectView):
-    url = reverse_lazy('settings')  # Redirect to profile page after email confirmation
+    url = reverse_lazy('settings')
 
     def get_redirect_url(self, *args, **kwargs):
         uidb64 = kwargs['uidb64']
