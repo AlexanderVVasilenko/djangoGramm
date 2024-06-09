@@ -2,11 +2,16 @@
 
   {% if is_owner %}
     <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
   {% endif %}
 
   <h2>Posts</h2>
   <ul>
     {% for post in posts %}
-      <li>{{ post.title }}</li>
+      <li>
+        <img src="{{ post.photos.first.image.url }}" alt="Post Image" style="width: 307.67px; height: 307.67px">
+        <a href="{% url 'post' pk=post.pk %}">View Post</a>
+      </li>
+
     {% endfor %}
   </ul>

@@ -5,66 +5,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Posts</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <ul class="list-group">
-                    <!-- Iterate over object_list -->
-                    {% for object in object_list %}
-                    <li class="list-group-item mb-4">
-                        <div class="media">
-                            {% if object.user.avatar %}
-                                <img src="{{ object.user.avatar.url }}" class="mr-3 rounded-circle" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
-                            {% else %}
-                                <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
-                            {% endif %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'profile' pk=user.username %}" class="btn btn-primary">My Profile</a>
+        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+    {% endif %}
 
-                            <div class="media-body">
-                                <h5 class="mt-0">{{ object.user.username }}</h5>
-                                <p>{{ object.description }}</p>
-                                <div>
-                                    <!-- Display Photos -->
-                                    {% for photo in object.photo_set.all %}
-                                    <img src="{{ photo.url }}" class="img-fluid mb-2" alt="Post Image" style="width: 100%;">
-                                    {% endfor %}
-                                </div>
-                                <div class="mt-2">
-                                    <!-- Display Comments -->
-                                    <h6>Comments</h6>
-                                    {% for comment in object.comment_set.all %}
-                                    <div class="media mt-3">
-                                        <img src="{{ comment.user.avatar.url }}" class="mr-3 rounded-circle" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
-                                        <div class="media-body">
-                                            <h6 class="mt-0">{{ comment.user.username }}</h6>
-                                            <p>{{ comment.text }}</p>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                                <div class="mt-2">
-                                    <!-- Display Likes -->
-                                    <h6>Likes</h6>
-                                    <p>{{ object.like_set.count }} likes</p>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <!-- If object_list is empty  -->
-                    {% empty %}
-                    <li class="list-group-item">No posts yet.</li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
+    <ul>
+        <!-- Iterate over object_list -->
+        {% for object in object_list %}
+            <li>
+                {% if object.user.avatar %}
+                    <a href="{% url 'profile' pk=object.user.username %}">
+                        <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
+                    </a>
+                {% else %}
+                    <a href="{% url 'profile' pk=object.user.username %}">
+                        <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
+                    </a>
+                {% endif %}
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+                <h5 class="mt-0">
+                    <a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a>
+                </h5>
+                <p>{{ object.description }}</p>
+                <!-- Link to Post Detail Page -->
+                <a href="{% url 'post' pk=object.pk %}">View Post</a>
+                <!-- Display Photos -->
+                {% for photo in object.photos.all %}
+                    <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
+                {% endfor %}
+                <!-- Display Comments -->
+                <h6>Comments</h6>
+                {% for comment in object.comment_set.all %}
+                    <a href="{% url 'profile' pk=comment.user.username %}">
+                        <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
+                    </a>
+                    <h6>
+                        <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
+                    </h6>
+                    <p>{{ comment.content }}</p>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'comment' pk=object.pk %}">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button type="submit">Submit</button>
+                    </form>
+                {% endif %}
+
+                <!-- Your existing post display code goes here -->
+
+                <!-- Display Likes -->
+                <h6>Likes</h6>
+                <p>{{ object.like_set.count }} likes</p>
+            </li>
+            <!-- If object_list is empty  -->
+        {% empty %}
+            <li>No posts yet.</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

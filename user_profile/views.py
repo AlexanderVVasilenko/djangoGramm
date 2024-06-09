@@ -1,6 +1,6 @@
 # user_profile/views.py
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
@@ -122,3 +122,7 @@ class SignUpView(CreateView):
         login(self.request, user)
         return response
 
+
+def custom_logout(request):
+    logout(request)
+    return redirect(reverse('home'))

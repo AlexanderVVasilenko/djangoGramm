@@ -18,8 +18,6 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-import feed
-import user_profile
 from djangoGramm import settings
 
 urlpatterns = [

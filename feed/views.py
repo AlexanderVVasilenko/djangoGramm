@@ -1,10 +1,14 @@
 # feed/views.py
 from django.contrib import auth
+from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views import View
 from django.views.generic import DetailView, TemplateView
 
+from feed.forms import CommentForm
 from feed.models import Post
 from user_profile.forms import AuthorForm
 
@@ -13,17 +17,23 @@ class PostDetailView(DetailView):
     model = Post
     template_name = 'feed/post.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+        return context
+
 
 class HomePageView(TemplateView):
-    model = Post
     template_name = 'feed/home.html'
+    context_object_name = 'object_list'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
             posts = Post.objects.all()
             context['object_list'] = posts
-        else:
+            context['user'] = self.request.user
+            context['comment_form'] = CommentForm()
             form = AuthorForm()
             context['form'] = form
         return context
@@ -51,3 +61,22 @@ class HomePageView(TemplateView):
                 form.add_error(None, "Invalid username or password")
 
         return render(request, "user_profile/login.html", {"form": form})
+
+
+class CreateCommentView(View):
+    def post(self, request, *args, **kwargs):
+        post_id = self.kwargs.get('pk')
+        form = CommentForm(request.POST)
+        post = Post.objects.get(pk=post_id)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            referer = request.META.get('HTTP_REFERER', '')
+            if reverse('home') in referer:
+                return HttpResponseRedirect(reverse('home'))
+            elif reverse('post', kwargs={'pk': post_id}) in referer:
+                return HttpResponseRedirect(reverse('post', kwargs={'pk': post_id}))
+
+        return render(request, 'feed/post.html', {'object': post, 'comment_form': form})

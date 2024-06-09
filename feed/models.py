@@ -29,6 +29,6 @@ class Like(models.Model):
 
 
 class Photo(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name="photos", on_delete=models.CASCADE)
     image = models.ImageField(upload_to='djangoGramm/photos')
     index = PositiveSmallIntegerField()
