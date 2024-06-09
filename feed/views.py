@@ -1,9 +1,7 @@
 # feed/views.py
 from django.contrib import auth
-from django.contrib.auth import logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView, TemplateView
@@ -55,7 +53,8 @@ class HomePageView(TemplateView):
                 user = auth.authenticate(username=email_or_username, password=password)
 
             if user is not None:
-                auth.login(request, user)
+                if user.is_active:
+                    auth.login(request, user)
                 return HttpResponseRedirect(reverse("home"))
             else:
                 form.add_error(None, "Invalid username or password")

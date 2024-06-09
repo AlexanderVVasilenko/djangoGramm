@@ -65,20 +65,18 @@ class EditProfileForm(forms.ModelForm):
         fields = ['username', 'email', 'name', 'bio', 'avatar']
 
 
-class SignUpForm(UserCreationForm):
+class BasicSignUpForm(UserCreationForm):
     email = forms.EmailField()
-    name = forms.CharField(max_length=150)
     username = forms.CharField(max_length=150)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'name']
+        fields = ['username', 'email']
 
     def save(self, commit=True):
-        user = super(SignUpForm, self).save(commit=False)
+        user = super(BasicSignUpForm, self).save(commit=False)
         user.email = self.cleaned_data.get('email')
         user.username = self.cleaned_data.get('username')
-        user.name = self.cleaned_data.get('name')
         if not commit:
             return user
         else:

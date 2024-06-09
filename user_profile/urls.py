@@ -1,6 +1,5 @@
-# user_profile/urls.py
-from django.contrib.auth.views import LogoutView
 from django.urls import path
+from django.contrib.auth.views import LogoutView
 
 from user_profile import views
 
@@ -15,4 +14,10 @@ urlpatterns = [
         name='password_reset_confirm'
     ),
     path('accounts/logout', views.custom_logout, name='logout'),
+    path('accounts/confirmation_sent/', views.ConfirmationSentView.as_view(), name='confirmation_sent'),
+    path(
+        "accounts/emailsignup/confirm/<uidb64>/<token>",
+        views.ConfirmEmailView.as_view(),
+        name='confirm_email'
+    )
 ]
