@@ -125,16 +125,15 @@ AUTH_USER_MODEL = 'user_profile.User'
 MEDIA_ROOT = BASE_DIR / "media/"
 MEDIA_URL = '/media/'
 
-# Increase the default max upload size if necessary
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'  # Outlook.com SMTP server
-EMAIL_PORT = 587  # Outlook.com SMTP port
-EMAIL_USE_TLS = True  # Enable TLS encryption
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = 'djangogramm@outlook.com'  # Your Outlook.com email address
-EMAIL_HOST_PASSWORD = 'dam_v_popu'  # Your Outlook.com email password
+EMAIL_HOST_USER = 'djangogramm@outlook.com'
+EMAIL_HOST_PASSWORD = 'dam_v_popu'
 EMAIL_DEBUG = True
