@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import User
+from user_profile.models import User
 
 
 class AuthorForm(forms.ModelForm):
@@ -78,6 +78,5 @@ class BasicSignUpForm(UserCreationForm):
         user.username = self.cleaned_data.get('username')
         if not commit:
             return user
-        else:
-            user.save()
-            return user
+        user.save()
+        return user
