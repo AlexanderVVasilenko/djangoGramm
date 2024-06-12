@@ -1,0 +1,1 @@
+web: gunicorn djangoGramm.wsgi --log-file -
