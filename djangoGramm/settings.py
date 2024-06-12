@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 import django_heroku
 from dotenv import load_dotenv
+import dj_database_url
+
 
 load_dotenv()
 
@@ -18,7 +20,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 DEBUG = os.getenv("DEBUG", False)
 
 # Database configuration
-# django_heroku.settings(locals())
+django_heroku.settings(locals())
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -70,14 +72,7 @@ WSGI_APPLICATION = 'djangoGramm.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "oleksandr_djangogramm",
-        "USER": "oleksandr",
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": "postgresql-oleksandr.alwaysdata.net",
-        "PORT": "5432"
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 # Password validation
