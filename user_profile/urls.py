@@ -18,5 +18,6 @@ urlpatterns = [
         "accounts/emailsignup/confirm/<uidb64>/<token>",
         views.ConfirmEmailView.as_view(),
         name='confirm_email'
-    )
+    ),
+    path("accounts/emailsignup/success", views.FinalSignupView.as_view(), name='final_signup')
 ]

@@ -80,3 +80,22 @@ class BasicSignUpForm(UserCreationForm):
             return user
         user.save()
         return user
+
+
+class FinalSignUpForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Full Name'}),
+        max_length=150,
+        required=True
+    )
+    bio = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Bio'}),
+        required=False
+    )
+    avatar = forms.ImageField(
+        required=False
+    )
+
+    class Meta:
+        model = User
+        fields = ['name', 'bio', 'avatar']

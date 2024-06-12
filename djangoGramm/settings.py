@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,12 +9,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-zw$-q6d6h*&dzreapy2mhf9vje&l1rih-+99ex2=+6boxil=oo'
+SECRET_KEY = "django-insecure-zw$-q6d6h*&dzreapy2mhf9vje&l1rih-+99ex2=+6boxil=oo"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Database configuration
+# django_heroku.settings(locals())
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -67,8 +68,12 @@ WSGI_APPLICATION = 'djangoGramm.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': "oleksandr_djangogramm",
+        "USER": "oleksandr",
+        "PASSWORD": "fGERtxF5XE#@v5Z",
+        "HOST": "postgresql-oleksandr.alwaysdata.net",
+        "PORT": "5432"
     }
 }
 
@@ -126,5 +131,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'djangogramm@outlook.com'
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_PASSWORD = "dam_v_popu"
 EMAIL_DEBUG = True

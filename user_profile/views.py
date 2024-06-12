@@ -3,6 +3,7 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,11 +11,12 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DetailView, RedirectView
 
 from djangoGramm import settings
 from feed.models import Post
-from user_profile.forms import AuthorForm, EditProfileForm, BasicSignUpForm
+from user_profile.forms import AuthorForm, EditProfileForm, BasicSignUpForm, FinalSignUpForm
 from user_profile.models import User
 
 
@@ -119,12 +121,15 @@ class SignUpView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        user = form.save()
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
 
         self.send_confirmation_email(user)
         return response
 
     def send_confirmation_email(self, user):
+        current_site = get_current_site(self.request)
         token = default_token_generator.make_token(user)
         uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
         confirm_url = reverse_lazy('confirm_email', kwargs={'uidb64': uidb64, 'token': token})
@@ -132,13 +137,13 @@ class SignUpView(CreateView):
         subject = 'Confirm Your Email'
         message = render_to_string(
             'user_profile/confirmation_email.html',
-            {'confirm_url': confirm_url, "user": user.username})
+            {'confirm_url': confirm_url, "user": user.username, "domain": current_site.domain})
 
         send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
 
 
 class ConfirmEmailView(RedirectView):
-    url = reverse_lazy('settings')
+    url = reverse_lazy('final_signup')
 
     def get_redirect_url(self, *args, **kwargs):
         uidb64 = kwargs['uidb64']
@@ -148,13 +153,13 @@ class ConfirmEmailView(RedirectView):
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
 
-            if default_token_generator.check_token(user, token):
+            if default_token_generator.check_token(user, token) and user:
                 user.is_active = True
                 user.save()
                 login(self.request, user)
                 return super().get_redirect_url(*args, **kwargs)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            pass
+            return render(self.request, 'user_profile/activation_invalid.html')
 
         return reverse_lazy('confirmation_failed')
 
@@ -166,3 +171,15 @@ def custom_logout(request):
 
 class ConfirmationSentView(TemplateView):
     template_name = 'user_profile/confirmation_sent.html'
+
+
+class FinalSignupView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'user_profile/final_signup.html', {"form": FinalSignUpForm()})
+
+    def post(self, request, *args, **kwargs):
+        form = FinalSignUpForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('profile', kwargs={'pk': request.user.pk}))
+        return render(request, 'user_profile/final_signup.html', {"form": form})
