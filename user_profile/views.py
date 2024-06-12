@@ -137,7 +137,7 @@ class SignUpView(CreateView):
         subject = 'Confirm Your Email'
         message = render_to_string(
             'user_profile/confirmation_email.html',
-            {'confirm_url': confirm_url, "user": user.username, "domain": current_site.domain})
+            {'confirm_url': confirm_url, "username": user.username, "domain": current_site.domain})
 
         send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
 
