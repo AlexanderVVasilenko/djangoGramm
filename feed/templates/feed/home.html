@@ -1,3 +1,5 @@
+<!-- TODO: Fix dropdown menu to dropup; Implement displaying photos with сarousel -->
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -5,66 +7,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Posts</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fafafa;
+        }
+        .navbar {
+            border-bottom: 1px solid #dbdbdb;
+        }
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .post {
+            background: white;
+            border: 1px solid #dbdbdb;
+            margin-bottom: 20px;
+        }
+        .post-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid #efefef;
+        }
+        .post-image {
+            width: 100%;
+        }
+        .post-body {
+            padding: 15px;
+        }
+        .post-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #efefef;
+        }
+        .comment-form {
+            margin-top: 10px;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .sidebar .nav-link {
+            margin: 10px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .sidebar .navbar-brand {
+            margin-bottom: 40px;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+        .dropdown-container {
+            position: relative;
+        }
+        .dropdown-toggle::after {
+            content: '\25B2'; /* Upward arrow */
+            margin-left: 5px;
+            font-size: 0.8em;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%; /* Change from bottom to top */
+            left: 0;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1); /* Change shadow direction */
+            z-index: 1;
+        }
+        .dropdown-container:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    {% if user.is_authenticated %}
-        <a href="{% url 'profile' pk=user.username %}" class="btn btn-primary">My Profile</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    {% endif %}
+    <div class="sidebar">
+        <a class="navbar-brand" href="#">DjangoGramm</a>
+        <a href="#" class="nav-link btn btn-outline-primary">General</a>
+        <a href="#" class="nav-link btn btn-outline-primary">Search</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' pk=user.username %}" class="nav-link btn btn-outline-primary">Profile</a>
+            <div class="dropdown-container mt-auto">
+                <button class="nav-link btn btn-outline-primary dropdown-toggle">More</button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{% url 'settings' %}">Edit Profile</a>
+                    <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="#" class="nav-link btn btn-outline-primary mt-auto">More</a>
+        {% endif %}
+    </div>
 
-    <ul>
-        <!-- Iterate over object_list -->
-        {% for object in object_list %}
-            <li>
-                {% if object.user.avatar %}
-                    <a href="{% url 'profile' pk=object.user.username %}">
-                        <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
-                    </a>
-                {% else %}
-                    <a href="{% url 'profile' pk=object.user.username %}">
-                        <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
-                    </a>
-                {% endif %}
-
-                <h5 class="mt-0">
-                    <a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a>
-                </h5>
-                <p>{{ object.description }}</p>
-                <!-- Link to Post Detail Page -->
-                <a href="{% url 'post' pk=object.pk %}">View Post</a>
-                <!-- Display Photos -->
-                {% for photo in object.photos.all %}
-                    <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
-                {% endfor %}
-                <!-- Display Comments -->
-                <h6>Comments</h6>
-                {% for comment in object.comment_set.all %}
-                    <a href="{% url 'profile' pk=comment.user.username %}">
-                        <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
-                    </a>
-                    <h6>
-                        <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
-                    </h6>
-                    <p>{{ comment.content }}</p>
-                {% endfor %}
-                {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'comment' pk=object.pk %}">
-                        {% csrf_token %}
-                        {{ comment_form.as_p }}
-                        <button type="submit">Submit</button>
-                    </form>
-                {% endif %}
-
-                <!-- Your existing post display code goes here -->
-
-                <!-- Display Likes -->
-                <h6>Likes</h6>
-                <p>{{ object.like_set.count }} likes</p>
-            </li>
-            <!-- If object_list is empty  -->
-        {% empty %}
-            <li>No posts yet.</li>
-        {% endfor %}
-    </ul>
+    <div class="content">
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <!-- Iterate over object_list -->
+                    {% for object in object_list %}
+                        <div class="post">
+                            <div class="post-header d-flex align-items-center">
+                                {% if object.user.avatar %}
+                                    <a href="{% url 'profile' pk=object.user.username %}">
+                                        <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'profile' pk=object.user.username %}">
+                                        <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                                    </a>
+                                {% endif %}
+                                <strong><a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a></strong>
+                            </div>
+                            <img src="{{ object.photos.first.image.url }}" alt="Post Image" class="post-image">
+                            <div class="post-body">
+                                <p>{{ object.description }}</p>
+                            </div>
+                            <div class="post-footer">
+                                <p>{{ object.like_set.count }} likes</p>
+                                <h6>Comments</h6>
+                                {% for comment in object.comment_set.all %}
+                                    <div class="d-flex align-items-start mb-2">
+                                        <a href="{% url 'profile' pk=comment.user.username %}">
+                                            <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle mr-2" style="width: 24px; height: 24px;">
+                                        </a>
+                                        <div>
+                                            <strong><a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a></strong>
+                                            <p class="mb-0">{{ comment.content }}</p>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'comment' pk=object.pk %}" class="comment-form">
+                                        {% csrf_token %}
+                                        {{ comment_form.as_p }}
+                                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No posts yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
