@@ -40,7 +40,11 @@
                 <h6>Comments</h6>
                 {% for comment in object.comment_set.all %}
                     <a href="{% url 'profile' pk=comment.user.username %}">
-                        <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
+                         {% if comment.user.avatar %}
+                             <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                         {% else %}
+                             <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                         {% endif %}
                     </a>
                     <h6>
                         <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
