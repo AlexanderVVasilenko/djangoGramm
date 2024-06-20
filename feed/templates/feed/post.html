@@ -1,58 +1,44 @@
+{% extends "base_authorised.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Post</title>
-</head>
-<body>
-    <a href="{% url 'profile' pk=user.username %}" class="btn btn-primary">My Profile</a>
-    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    <a href="{% url 'home' %}" class="btn btn-secondary">Feed</a>
-
-    {% if object.user.avatar %}
-        <a href="{% url 'profile' pk=object.user.username %}">
-            <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
-        </a>
-    {% else %}
-        <a href="{% url 'profile' pk=object.user.username %}">
-            <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
-        </a>
-    {% endif %}
-    <h5 class="mt-0">
-        <a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a>
-    </h5>
-    <p>{{ object.description }}</p>
-    <!-- Display Photos -->
-    {% for photo in object.photos.all %}
-        <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
-    {% endfor %}
-
-    <!-- Display Comments -->
-    <h6>Comments</h6>
-    <ul>
-        {% for comment in object.comment_set.all %}
-            <li>
-                <a href="{% url 'profile' pk=comment.user.username %}">
-                    <img src="{{ comment.user.avatar.url }}" class="mr-3 rounded-circle" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
-                </a>
-                <h6>
-                    <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
-                </h6>
-                <p>{{ comment.content }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <!-- Display Comment Form -->
-    <form method="post" action="{% url 'comment' pk=object.pk %}">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <button type="submit" class="btn btn-primary">Add Comment</button>
-    </form>
-
-    <!-- Display Likes -->
-    <h6>Likes</h6>
-    <p>{{ object.like_set.count }} likes</p>
-</body>
-</html>
+{% block title %}Post{% endblock %}
+{% block sub_css_files %}
+    <link rel="stylesheet" href="{% static 'feed/post.css' %}">
+{% endblock %}
+{% block sub_content %}
+    <div class="content">
+        <div class="post-container">
+            <div class="post-left">
+                <!-- Display Photos -->
+                {% for photo in object.photos.all %}
+                    <img src="{{ photo.image.url }}" alt="Post Image" class="post-image">
+                {% endfor %}
+            </div>
+            <div class="post-right">
+                <div class="post-header">
+                    <img src="{% if object.user.avatar %}{{ object.user.avatar.url }}{% else %}{% static 'feed/images/default.png' %}{% endif %}" alt="Avatar" class="avatar">
+                    <h5 class="username"><a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a></h5>
+                </div>
+                <p>{{ object.description }}</p>
+                <!-- Display Comments -->
+                <h6>Comments</h6>
+                <ul class="comment-list">
+                    {% for comment in object.comment_set.all %}
+                        <li class="comment-item">
+                            <img src="{{ comment.user.avatar.url }}" alt="Avatar" class="comment-avatar">
+                            <span class="comment-username"><a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>:</span>
+                            <span>{{ comment.content }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <!-- Display Likes -->
+                <div class="likes">{{ object.like_set.count }} likes</div>
+                <!-- Display Comment Form -->
+                <form method="post" action="{% url 'comment' pk=object.pk %}" class="add-comment-form">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" class="btn btn-primary add-comment-btn">Add Comment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

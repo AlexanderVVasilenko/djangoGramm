@@ -1,17 +1,47 @@
-<h1>{{ user.username }}'s Profile</h1>
-
-  {% if is_owner %}
-    <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
-    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-  {% endif %}
-
-  <h2>Posts</h2>
-  <ul>
-    {% for post in posts %}
-      <li>
-        <img src="{{ post.photos.first.image.url }}" alt="Post Image" style="width: 307.67px; height: 307.67px">
-        <a href="{% url 'post' pk=post.pk %}">View Post</a>
-      </li>
-
-    {% endfor %}
-  </ul>
+{% extends "base_authorised.html" %}
+{% load static %}
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+{% block sub_css_files %}
+    <link href="{% static 'user_profile/profile.css' %}" rel="stylesheet">
+{% endblock %}
+{% block sub_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="profile-avatar">
+                {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid">
+                {% else %}
+                    <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" class="rounded-circle img-fluid">
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="profile-header">
+                <h2>{{ user.username }}</h2>
+                {% if is_owner %}
+                    <a href="{% url 'settings' %}" class="btn btn-primary ml-3">Edit Profile</a>
+                    <a href="{% url 'logout' %}" class="btn btn-danger ml-2">Logout</a>
+                {% endif %}
+            </div>
+            <div class="profile-bio">
+                <p>{{ user.bio }}</p>
+            </div>
+            <div class="profile-stats">
+                <span><strong>{{ user.post_set.count }}</strong> posts</span>
+                <span><strong>{{ user.followers.count }}</strong> followers</span>
+                <span><strong>{{ user.following.count }}</strong> following</span>
+            </div>
+        </div>
+    </div>
+    <div class="row profile-posts">
+        {% for post in posts %}
+            <div class="col-md-4">
+                <a href="{% url 'post' pk=post.pk %}">
+                    <img src="{{ post.photos.first.image.url }}" alt="Post Image" class="img-fluid">
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    margin-left: 200px; /* Adjusted to fit the sidebar width */
+}
+.post-container {
+    max-width: 800px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row; /* Added to split the container into two parts */
+}
+.post-left, .post-right {
+    padding: 10px;
+}
+.post-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.post-right {
+    flex: 1.5;
+    display: flex;
+    flex-direction: column;
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+.username {
+    font-weight: bold;
+    margin-right: 10px;
+}
+.post-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+.comment-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+.comment-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+.comment-username {
+    font-weight: bold;
+    margin-right: 5px;
+}
+.add-comment-btn {
+    margin-top: 10px;
+}
+.likes {
+    margin-top: 10px;
+    font-weight: bold;
+}
