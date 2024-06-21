@@ -9,12 +9,12 @@
 {% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
+    {% if request.user.is_authenticated %}
     <div class="sidebar">
         <a class="navbar-brand" href="{% url "home" %}">DjangoGramm</a>
         <a href="{% url "home" %}" class="nav-link btn btn-outline-primary">General</a>
         <a href="#" class="nav-link btn btn-outline-primary">Search</a>
-        <a href="{% url 'profile' pk=user.username %}" class="nav-link btn btn-outline-primary">Profile</a>
+        <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary">Profile</a>
         <div class="dropup-container mt-auto">
             <label class="nav-link btn btn-outline-primary dropup-toggle" for="more-options">More</label>
             <input type="checkbox" id="more-options">

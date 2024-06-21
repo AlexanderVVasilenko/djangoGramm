@@ -1,11 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>DjangoGramm</title>
-</head>
-<body>
-    <div class="container login-container">
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login - DjangoGramm{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static 'user_profile/account.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
         <div class="login-box">
             <h1>DjangoGramm</h1>
             <form method="post">
@@ -20,10 +23,12 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Log In</button>
             </form>
+            <div class="forgot-password">
+                <a href="{% url 'reset_password' %}">Forgot Password?</a>
+            </div>
         </div>
         <div class="signup-box">
             <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

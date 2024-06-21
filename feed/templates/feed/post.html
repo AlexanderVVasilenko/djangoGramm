@@ -24,7 +24,11 @@
                 <ul class="comment-list">
                     {% for comment in object.comment_set.all %}
                         <li class="comment-item">
-                            <img src="{{ comment.user.avatar.url }}" alt="Avatar" class="comment-avatar">
+                            {% if comment.user.avatar %}
+                                <img src="{{ comment.user.avatar.url }}" alt="Avatar" class="comment-avatar">
+                            {% else %}
+                                <img src="{% static 'feed/images/default.png' %}" alt="Avatar" class="comment-avatar">
+                            {% endif %}
                             <span class="comment-username"><a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>:</span>
                             <span>{{ comment.content }}</span>
                         </li>

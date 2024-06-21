@@ -6,8 +6,7 @@ body {
     display: flex;
 }
 .container-fluid {
-            display: flex;
-            padding: 0;
-            margin: 0;
-            width: 100%;
+    width: 100%;
+    flex-direction: column; /* Set flex-direction to column for stacking elements vertically */
+    align-items: center; /* Align items (containers) along the center horizontally */
 }

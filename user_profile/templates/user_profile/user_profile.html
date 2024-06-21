@@ -17,11 +17,10 @@
             </div>
         </div>
         <div class="col-md-9">
-            <div class="profile-header">
+            <div class="profile-header d-flex align-items-center">
                 <h2>{{ user.username }}</h2>
                 {% if is_owner %}
                     <a href="{% url 'settings' %}" class="btn btn-primary ml-3">Edit Profile</a>
-                    <a href="{% url 'logout' %}" class="btn btn-danger ml-2">Logout</a>
                 {% endif %}
             </div>
             <div class="profile-bio">
