@@ -1,34 +1,45 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %}Login - DjangoGramm{% endblock %}
 
-{% block css_files %}
-    <link rel="stylesheet" href="{% static 'user_profile/account.css' %}">
-{% endblock %}
-
 {% block content %}
-    <div class="container">
-        <div class="login-box">
-            <h1>DjangoGramm</h1>
-            <form method="post">
-                {% csrf_token %}
-                <div class="form-group">
-                    {{ form.email_or_username.label_tag }}
-                    {{ form.email_or_username }}
-                </div>
-                <div class="form-group">
-                    {{ form.password.label_tag }}
-                    {{ form.password }}
-                </div>
-                <button type="submit" class="btn btn-primary">Log In</button>
-            </form>
-            <div class="forgot-password">
-                <a href="{% url 'reset_password' %}">Forgot Password?</a>
+<div class="container d-flex flex-column align-items-center justify-content-center min-vh-100">
+    <div class="card p-4 shadow-sm" style="width: 400px;">
+        <h1 class="card-title text-center mb-4">DjangoGramm</h1>
+        <form method="post" class="text-left">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
             </div>
-        </div>
-        <div class="signup-box">
-            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+            {% endif %}
+            <div class="form-group">
+                {{ form.email_or_username.label_tag }}
+                {{ form.email_or_username|add_class:"form-control" }}
+            </div>
+            <div class="form-group">
+                {{ form.password.label_tag }}
+                {{ form.password|add_class:"form-control" }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log In</button>
+        </form>
+        <div class="text-center mt-3">
+            <a href="{% url 'reset_password' %}">Forgot Password?</a>
         </div>
     </div>
+    <div class="mt-3 text-center">
+        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    </div>
+</div>
 {% endblock %}

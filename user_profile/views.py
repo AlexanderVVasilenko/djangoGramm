@@ -107,11 +107,16 @@ class ResetPasswordView(PasswordResetView):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "user_profile/password_reset_confirm.html"
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         form.save()
+        print("Set Password form is valid!")
         return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class SignUpView(CreateView):
