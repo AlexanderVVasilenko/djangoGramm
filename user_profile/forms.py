@@ -7,12 +7,10 @@ from user_profile.models import User
 class AuthorForm(forms.ModelForm):
     email_or_username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email or Username'}),
-        max_length=254,
-        label="Email or Username"
+        max_length=254
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-        label="Password"
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
     )
 
     def clean(self):
