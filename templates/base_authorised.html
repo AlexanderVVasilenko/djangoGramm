@@ -8,30 +8,33 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row row-cols-1">
+    <script>
+        function toggleDropup() {
+            var dropupMenu = document.querySelector('.dropup-menu');
+            dropupMenu.classList.toggle('d-none');
+        }
+    </script>
+    <div class="d-flex">
         {% if request.user.is_authenticated %}
-        <div class="col-md-3">
-            <div class="sidebar">
-                <a class="navbar-brand" href="{% url "home" %}">DjangoGramm</a>
-                <a href="{% url "home" %}" class="nav-link btn btn-outline-primary">General</a>
-                <a href="#" class="nav-link btn btn-outline-primary">Search</a>
-                <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary">Profile</a>
-                <div class="dropup-container mt-auto">
-                    <label class="nav-link btn btn-outline-primary dropup-toggle" for="more-options">More</label>
-                    <input type="checkbox" id="more-options">
-                    <div class="dropup-menu">
-                        <a href="{% url 'settings' %}">Edit Profile</a>
-                        <a href="{% url 'logout' %}">Logout</a>
+            <div class="sidebar d-flex flex-column justify-content-between position-fixed" style="width: 250px; height: 100vh;">
+                <div class="p-3">
+                    <a class="navbar-brand d-block p-3 text-center" href="{% url "home" %}">DjangoGramm</a>
+                    <a href="{% url "home" %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Home</a>
+                    <a href="#" class="nav-link btn btn-outline-primary d-block w-100 text-center">Search</a>
+                    <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Profile</a>
+                </div>
+                <div class="dropup-container dropdown p-3 text-center position-relative">
+                    <button class="nav-link btn btn-outline-primary d-block w-100 text-center dropup-toggle" onclick="toggleDropup()">More</button>
+                    <div class="dropup-menu bg-light d-none">
+                        <a href="{% url 'settings' %}" class="d-block py-1 btn btn-outline-primary">Edit Profile</a>
+                        <a href="{% url 'logout' %}" class="d-block py-1 btn btn-outline-primary">Logout</a>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-9">
-            <div class="sub-content text-center">
+            <div class="content-container flex-grow-1 p-4" style="margin-left: 250px;">
                 {% block sub_content %}
                 {% endblock %}
             </div>
-        </div>
         {% endif %}
     </div>
 {% endblock %}
