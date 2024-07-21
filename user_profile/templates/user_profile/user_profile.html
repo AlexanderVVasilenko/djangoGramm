@@ -2,10 +2,10 @@
 {% load static %}
 {% block title %}{{ user.username }}'s Profile{% endblock %}
 {% block sub_content %}
-<div class="container">
+<div class="container mt-4">
     <div class="row">
         <div class="col-md-3 text-center">
-            <div class="profile-avatar">
+            <div class="profile-avatar mb-3">
                 {% if user.avatar %}
                     <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid">
                 {% else %}
@@ -17,7 +17,19 @@
             <div class="d-flex align-items-center">
                 <h2 class="me-3 mb-0">{{ user.username }}</h2>
                 {% if is_owner %}
-                    <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
+                    <a href="{% url 'settings' %}" class="btn btn-outline-primary">Edit Profile</a>
+                {% else %}
+                    {% if request.user in user.followers.all %}
+                        <form method="post" action="{% url 'unfollow' user.username %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-secondary">Unfollow</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'follow' user.username %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Follow</button>
+                        </form>
+                    {% endif %}
                 {% endif %}
             </div>
             <div class="mt-3">
