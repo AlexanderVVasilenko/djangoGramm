@@ -24,6 +24,12 @@ class HomePageView(TemplateView):
     template_name = 'feed/home.html'
     context_object_name = 'object_list'
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            following_users = self.request.user.following.all()
+            return Post.objects.filter(user__in=following_users)
+        return Post.objects.none()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
