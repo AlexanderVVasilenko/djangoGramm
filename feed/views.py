@@ -33,12 +33,14 @@ class HomePageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            posts = Post.objects.all()
-            context['object_list'] = posts
+            # posts = Post.objects.all()
+            context['object_list'] = self.get_queryset()
             context['user'] = self.request.user
             context['comment_form'] = CommentForm()
             form = AuthorForm()
             context['form'] = form
+        else:
+            context['object_list'] = []
         return context
 
     def get_template_names(self):
