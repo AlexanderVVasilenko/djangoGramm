@@ -1,12 +1,12 @@
 from django.contrib import auth
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView, TemplateView
 
 from feed.forms import CommentForm
-from feed.models import Post
+from feed.models import Post, Like
 from user_profile.forms import AuthorForm
 
 
@@ -91,3 +91,24 @@ class CreateCommentView(View):
             'comment_form': form,
         }
         return render(request, 'feed/post.html', context)
+
+
+class ToggleLikeView(View):
+    def post(self, request, *args, **kwargs):
+        post_id = self.kwargs.get('pk')
+        post = Post.objects.get(pk=post_id)
+
+        like = post.likes.filter(user=request.user)
+        if like.exists():
+            like.delete()
+            liked = False
+        else:
+            post.likes.add(post=post, user=request.user)
+            liked = True
+
+        return JsonResponse({
+            "liked": liked,
+            "post_id": post_id,
+            "message": "You have successfully liked",
+            "liked_count": post.likes.count()
+        })
