@@ -1,5 +1,5 @@
 {% extends "base_authorised.html" %}
-{% load custom_filters %}
+{% load feed_filters %}
 {% load static %}
 {% block title %}Post{% endblock %}
 {% block sub_content %}
@@ -36,8 +36,9 @@
                                 </ul>
                             </div>
                             <div class="card-footer">
-                                <!-- Display Likes -->
-                                <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p>
+                                <!-- Display Likes
+                                <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p> -->
+                                {% include 'feed/includes/likes_section.html' %}
                                 <!-- Display Comment Form -->
                                 {% if user.is_authenticated %}
                                     <form method="post" action="{% url 'comment' pk=object.pk %}" class="d-flex flex-column align-items-start">

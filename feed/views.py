@@ -103,12 +103,16 @@ class ToggleLikeView(View):
             like.delete()
             liked = False
         else:
-            post.likes.add(post=post, user=request.user)
+            Like.objects.create(post=post, user=request.user)
             liked = True
 
-        return JsonResponse({
-            "liked": liked,
-            "post_id": post_id,
-            "message": "You have successfully liked",
-            "liked_count": post.likes.count()
-        })
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({
+                "liked": liked,
+                "post_id": post_id,
+                "message": "You have successfully liked",
+                "liked_count": post.likes.count()
+            })
+
+        refer = request.META.get('HTTP_REFERER', reverse("home"))
+        return HttpResponseRedirect(refer)

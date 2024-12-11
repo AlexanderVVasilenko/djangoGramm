@@ -30,7 +30,8 @@
                             <p class="card-text">{{ object.description }}</p>
                         </div>
                         <div class="card-footer">
-                            <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p>
+                            <!-- <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p> -->
+                            {% include 'feed/includes/likes_section.html' %}
                             <h6>Comments</h6>
                             {% for comment in object.comment_set.all %}
                                 <div class="d-flex align-items-start mb-2">
