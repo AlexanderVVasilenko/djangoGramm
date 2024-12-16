@@ -1,7 +1,9 @@
+{% load feed_filters %}
+
 <div>
     <form method="post" action="{% url 'toggle_like' pk=object.id %}">
         {% csrf_token %}
-        {% if user in object.likes.all %}
+        {% if object|has_liked:user %}
             <button type="submit" class="btn btn-danger">Unlike</button>
         {% else %}
             <button type="submit" class="btn btn-primary">Like</button>
