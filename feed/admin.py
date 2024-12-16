@@ -26,6 +26,10 @@ class CommentAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
 
 
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('user', "post", "created_at")
+
+
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Like)
