@@ -1,3 +1,5 @@
+from cloudinary.models import CloudinaryField
+
 from django.contrib.auth.models import PermissionsMixin, BaseUserManager, AbstractBaseUser
 from django.db import models
 
@@ -30,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, primary_key=True)
     name = models.CharField(max_length=30)
     bio = models.TextField()
-    avatar = models.ImageField(upload_to='avatars')
+    avatar = CloudinaryField("avatar")
     following = models.ManyToManyField('User', related_name='followers', blank=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

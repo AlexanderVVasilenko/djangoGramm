@@ -1,4 +1,5 @@
 import uuid
+from cloudinary.models import CloudinaryField
 
 from django.db import models
 from django.db.models import PositiveSmallIntegerField
@@ -37,5 +38,5 @@ class Like(models.Model):
 
 class Photo(models.Model):
     post = models.ForeignKey(Post, related_name="photos", on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='djangoGramm/photos')
+    image = CloudinaryField('image')
     index = PositiveSmallIntegerField()

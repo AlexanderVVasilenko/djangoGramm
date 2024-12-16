@@ -11,13 +11,19 @@
                         <div class="col-md-7 px-0">
                             <!-- Display Photos -->
                             {% for photo in object.photos.all %}
-                                <img src="{{ photo.image.url }}" alt="Post Image" class="img-fluid w-100">
+                                {% load cloudinary %}
+                                {% cloudinary photo.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true'%}
                             {% endfor %}
                         </div>
                         <div class="col-md-5 d-flex flex-column px-0">
                             <div class="card-body flex-grow-1">
                                 <div class="d-flex align-items-center mb-3">
-                                    <img src="{% if object.user.avatar %}{{ object.user.avatar.url }}{% else %}{% static 'feed/images/default.png' %}{% endif %}" alt="Avatar" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                                    {% if object.user.avatar %}
+                                        {% load cloudinary %}
+                                        {% cloudinary object.user.avatar quality='auto' width=24 height=24 crop="pad" background='gen_fill:ignore-foreground_true'%}
+                                    {% else %}
+                                        <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                    {% endif %}
                                     <h5 class="mb-0"><a href="{% url 'profile' pk=object.user.username %}" class="text-decoration-none">{{ object.user.username }}</a></h5>
                                 </div>
                                 <p class="card-text">{{ object.description }}</p>
@@ -26,7 +32,12 @@
                                 <ul class="list-unstyled">
                                     {% for comment in object.comment_set.all %}
                                         <li class="d-flex align-items-start mb-2">
-                                            <img src="{% if comment.user.avatar %}{{ comment.user.avatar.url }}{% else %}{% static 'feed/images/default.png' %}{% endif %}" alt="Avatar" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                            {% if comment.user.avatar %}
+                                                {% load cloudinary %}
+                                                {% cloudinary comment.user.avatar quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                                            {% else %}
+                                                <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                            {% endif %}
                                             <div>
                                                 <span class="fw-bold"><a href="{% url 'profile' pk=comment.user.username %}" class="text-decoration-none">{{ comment.user.username }}</a>:</span>
                                                 <span>{{ comment.content }}</span>

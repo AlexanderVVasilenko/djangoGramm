@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "user_profile",
     "feed",
-    'django.contrib.humanize'
+    'django.contrib.humanize',
+    "cloudinary",
 ]
 
 MIDDLEWARE = [
@@ -120,9 +121,6 @@ django_heroku.settings(locals())
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'user_profile.User'
-
-MEDIA_ROOT = BASE_DIR / "media/"
-MEDIA_URL = '/media/'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760  # 10 MB, adjust as necessary

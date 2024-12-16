@@ -7,7 +7,9 @@
         <div class="col-md-3 text-center">
             <div class="profile-avatar mb-3">
                 {% if user.avatar %}
-                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid">
+                    {% load cloudinary %}
+                    {% cloudinary user.avatar quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                    <!--<img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid">-->
                 {% else %}
                     <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" class="rounded-circle img-fluid">
                 {% endif %}
@@ -46,7 +48,9 @@
         {% for post in posts %}
             <div class="col-md-4 mb-4">
                 <a href="{% url 'post' pk=post.pk %}">
-                    <img src="{{ post.photos.first.image.url }}" alt="Post Image" class="img-fluid">
+                    <!--<img src="{{ post.photos.first.image.url }}" alt="Post Image" class="img-fluid">-->
+                    {% load cloudinary %}
+                    {% cloudinary post.photos.first.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
                 </a>
             </div>
         {% endfor %}

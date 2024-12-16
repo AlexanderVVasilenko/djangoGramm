@@ -12,7 +12,9 @@
                             <div class="d-flex align-items-center">
                                 {% if object.user.avatar %}
                                     <a href="{% url 'profile' pk=object.user.username %}">
-                                        <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                                        <!--<img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">-->
+                                        {% load cloudinary %}
+                                        {% cloudinary object.user.avatar quality='auto' width=32 height=32 crop="pad" background='gen_fill:ignore-foreground_true'%}
                                     </a>
                                 {% else %}
                                     <a href="{% url 'profile' pk=object.user.username %}">
@@ -25,7 +27,9 @@
                                 <a href="{% url 'post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
                             </div>
                         </div>
-                        <img src="{{ object.photos.first.image.url }}" alt="Post Image" class="card-img-top">
+                        <!--<img src="{{ object.photos.first.image.url }}" alt="Post Image" class="card-img-top">-->
+                        {% load cloudinary %}
+                        {% cloudinary object.photos.first.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
                         <div class="card-body">
                             <p class="card-text">{{ object.description }}</p>
                         </div>
@@ -37,7 +41,9 @@
                                 <div class="d-flex align-items-start mb-2">
                                     <a href="{% url 'profile' pk=comment.user.username %}">
                                         {% if comment.user.avatar %}
-                                            <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                            <!--<img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">-->
+                                            {% load cloudinary %}
+                                            {% cloudinary comment.user.avatar quality='auto' width=24 height=24 crop="pad" background='gen_fill:ignore-foreground_true' %}
                                         {% else %}
                                             <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
                                         {% endif %}
