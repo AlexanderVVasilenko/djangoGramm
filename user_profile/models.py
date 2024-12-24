@@ -28,7 +28,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=False, blank=False)
     username = models.CharField(max_length=30, primary_key=True)
     name = models.CharField(max_length=30)
     bio = models.TextField()
@@ -44,4 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email']
 
     def __str__(self):
-        return self.email
+        if not self.email and not self.username:
+            return "Corrupted User Instance"
+        print(str(self.email) or str(self.username) or "Unnamed User")
+        print("1,")
+        return str(self.email) or str(self.username) or "Unnamed User"
