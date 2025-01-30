@@ -7,7 +7,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 {% for object in object_list %}
-                    <div class="card mb-4">
+                    <div class="card mb-4" style="border-radius: unset">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 {% if object.user.avatar %}
@@ -23,13 +23,11 @@
                                 {% endif %}
                                 <strong><a href="{% url 'profile' pk=object.user.username %}" class="text-decoration-none">{{ object.user.username }}</a></strong>
                             </div>
-                            <div>
-                                <a href="{% url 'post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
-                            </div>
+                            <a href="{% url 'post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
                         </div>
                         <!--<img src="{{ object.photos.first.image.url }}" alt="Post Image" class="card-img-top">-->
                         {% load cloudinary %}
-                        {% cloudinary object.photos.first.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                        {% cloudinary object.photos.first.image class='post-image' quality='auto' crop="pad" background='gen_fill:ignore-foreground_true' %}
                         <div class="card-body">
                             <p class="card-text">{{ object.description }}</p>
                         </div>

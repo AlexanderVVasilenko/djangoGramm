@@ -37,6 +37,14 @@
     padding: .375rem .75rem;
 }
 
+.post-image {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    object-fit: cover;
+    border-radius: unset;
+}
+
 * {
   margin: 0;
   padding: 0;
