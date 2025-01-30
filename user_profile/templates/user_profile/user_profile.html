@@ -6,7 +6,6 @@
     <div class="row">
         <div class="col-md-3 text-center">
             <div class="profile-avatar mb-3">
-                {{ user.avatar|default:"No avatar" }}
                 {% if user.avatar and user.avatar.url %}
                     {% load cloudinary %}
                     {% cloudinary user.avatar quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
