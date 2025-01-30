@@ -32,7 +32,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, primary_key=True)
     name = models.CharField(max_length=30)
     bio = models.TextField()
-    avatar = CloudinaryField("avatar")
+    avatar = CloudinaryField("avatar", blank=True, null=True)
     following = models.ManyToManyField('User', related_name='followers', blank=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -46,6 +46,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         if not self.email and not self.username:
             return "Corrupted User Instance"
-        print(str(self.email) or str(self.username) or "Unnamed User")
-        print("1,")
-        return str(self.email) or str(self.username) or "Unnamed User"
+        return str(self.username) or str(self.email) or "Unnamed User"

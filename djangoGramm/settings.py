@@ -132,3 +132,12 @@ EMAIL_USE_SSL = False
 EMAIL_HOST_USER = 'djangogramm@outlook.com'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_DEBUG = True
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dhhf8apic',
+    'API_KEY': '317263658894723',
+    'API_SECRET': os.getenv('API_SECRET')
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
