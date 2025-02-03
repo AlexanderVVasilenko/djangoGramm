@@ -16,6 +16,12 @@ class Post(models.Model):
     def __str__(self):
         return self.description
 
+    def like_post(self, user):
+        Like.objects.create(post=self, user=user)
+
+    def unlike_post(self, user):
+        Like.objects.filter(post=self, user=user).delete()
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

@@ -103,7 +103,7 @@ class ToggleLikeView(View):
             like.delete()
             liked = False
         else:
-            Like.objects.create(post=post, user=request.user)
+            post.like_post(request.user)
             liked = True
 
         if request.headers.get("x-requested-with") == "XMLHttpRequest":

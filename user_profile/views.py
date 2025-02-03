@@ -24,7 +24,7 @@ class FollowUserView(View):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             user_to_follow = User.objects.get(username=kwargs['username'])
-            request.user.following.add(user_to_follow)
+            request.user.follow(user_to_follow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_follow.username}))
         return HttpResponseRedirect(reverse('login'))
 
@@ -33,7 +33,7 @@ class UnfollowUserView(View):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             user_to_unfollow = User.objects.get(username=kwargs['username'])
-            request.user.following.remove(user_to_unfollow)
+            request.user.unfollow(user_to_unfollow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_unfollow.username}))
         return HttpResponseRedirect(reverse('login'))
 

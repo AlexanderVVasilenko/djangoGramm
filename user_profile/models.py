@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=30)
     bio = models.TextField()
     avatar = CloudinaryField("avatar", blank=True, null=True)
-    following = models.ManyToManyField('User', related_name='followers', blank=True)
+    following = models.ManyToManyField("self", symmetrical=False, related_name='followers', blank=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -47,3 +47,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not self.email and not self.username:
             return "Corrupted User Instance"
         return str(self.username) or str(self.email) or "Unnamed User"
+
+    def follow(self, user):
+        self.following.add(user)
+
+    def unfollow(self, user):
+        self.following.remove(user)
