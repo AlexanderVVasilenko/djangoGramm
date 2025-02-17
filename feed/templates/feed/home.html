@@ -64,7 +64,39 @@
                 {% empty %}
                     <p class="text-center">No posts yet.</p>
                 {% endfor %}
-            </div>
-        </div>
-    </div>
-{% endblock %}
+                <!-- Display Comments -->
+                <h6>Comments</h6>
+                {% for comment in object.comment_set.all %}
+                    <a href="{% url 'profile' pk=comment.user.username %}">
+                         {% if comment.user.avatar %}
+                             <img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                         {% else %}
+                             <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle mr-2" style="width: 32px; height: 32px;">
+                         {% endif %}
+                    </a>
+                    <h6>
+                        <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
+                    </h6>
+                    <p>{{ comment.content }}</p>
+                {% endfor %}
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'comment' pk=object.pk %}">
+                        {% csrf_token %}
+                        {{ comment_form.as_p }}
+                        <button type="submit">Submit</button>
+                    </form>
+                {% endif %}
+
+                <!-- Your existing post display code goes here -->
+
+                <!-- Display Likes -->
+                <h6>Likes</h6>
+                <p>{{ object.like_set.count }} likes</p>
+            </li>
+            <!-- If object_list is empty  -->
+        {% empty %}
+            <li>No posts yet.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
