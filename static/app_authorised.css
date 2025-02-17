@@ -1,0 +1,52 @@
+.sidebar {
+    background-color: #f8f9fa;
+    border-right: 1px solid #ddd;
+}
+.dropup-toggle {
+    cursor: pointer;
+}
+.dropup-menu {
+    position: absolute;
+    left: 50%;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    transform: translateX(-50%);
+
+    border-radius: 5px;
+    z-index: 1000;
+    top: -100%;
+    width: calc(100% - 2rem);
+    padding: 0;
+    margin-bottom: 0;
+}
+.dropup-container {
+    width: 100%;
+}
+
+.dropup-menu button {
+    width: 100%;
+}
+
+.dropup-menu a {
+    padding: .375rem .75rem;
+    margin: 0;
+}
+
+.nav-link {
+    padding: .375rem .75rem;
+}
+
+.post-image {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    object-fit: cover;
+    border-radius: unset;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

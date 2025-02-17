@@ -37,7 +37,7 @@ python manage.py runserver
 
 - Sign up for a new account or log in with existing credentials.
 - Edit your profile with a bio, and profile picture.
-- Explore posts from other users and interact by liking (IN DEVELOPMENT) or commenting.
+- Explore posts from other users and interact by liking or commenting.
 - Upload your images and share them with the community (IN DEVELOPMENT).
 
 ## Testing

@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from cloudinary.models import CloudinaryField
 
 from user_profile.models import User
 
@@ -7,12 +8,10 @@ from user_profile.models import User
 class AuthorForm(forms.ModelForm):
     email_or_username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email or Username'}),
-        max_length=254,
-        label="Email or Username"
+        max_length=254
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'}),
-        label="Password"
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
     )
 
     def clean(self):
@@ -49,9 +48,7 @@ class EditProfileForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Bio'}),
         required=False
     )
-    avatar = forms.ImageField(
-        required=False
-    )
+    avatar = CloudinaryField()
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -92,9 +89,7 @@ class FinalSignUpForm(forms.ModelForm):
         widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Bio'}),
         required=False
     )
-    avatar = forms.ImageField(
-        required=False
-    )
+    avatar = CloudinaryField()
 
     class Meta:
         model = User

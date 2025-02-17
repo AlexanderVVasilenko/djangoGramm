@@ -19,5 +19,7 @@ urlpatterns = [
         views.ConfirmEmailView.as_view(),
         name='confirm_email'
     ),
-    path("accounts/emailsignup/success", views.FinalSignupView.as_view(), name='final_signup')
+    path("accounts/emailsignup/success", views.FinalSignupView.as_view(), name='final_signup'),
+    path("follow/<str:username>", views.FollowUserView.as_view(), name='follow'),
+    path("unfollow/<str:username>", views.UnfollowUserView.as_view(), name='unfollow')
 ]

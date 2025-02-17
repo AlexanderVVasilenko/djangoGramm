@@ -1,11 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Error</title>
-</head>
-<body>
-  <h2>Activation Invalid</h2>
-  <p>The activation link is invalid. Please request a new one.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Error{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="card-title">Activation Invalid</h2>
+                        <p class="card-text">The activation link is invalid. Please request a new one.</p>
+                        <a href="{% url 'resend_activation' %}" class="btn btn-primary">Request New Link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,3 +1,5 @@
+from cloudinary.models import CloudinaryField
+
 from django.contrib.auth.models import PermissionsMixin, BaseUserManager, AbstractBaseUser
 from django.db import models
 
@@ -26,12 +28,12 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, null=False, blank=False)
     username = models.CharField(max_length=30, primary_key=True)
     name = models.CharField(max_length=30)
     bio = models.TextField()
-    avatar = models.ImageField(upload_to='avatars')
-    following = models.ManyToManyField('User', related_name='followers', blank=True)
+    avatar = CloudinaryField("avatar", blank=True, null=True)
+    following = models.ManyToManyField("self", symmetrical=False, related_name='followers', blank=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -42,4 +44,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['email']
 
     def __str__(self):
-        return self.email
+        if not self.email and not self.username:
+            return "Corrupted User Instance"
+        return str(self.username) or str(self.email) or "Unnamed User"
+
+    def follow(self, user):
+        self.following.add(user)
+
+    def unfollow(self, user):
+        self.following.remove(user)

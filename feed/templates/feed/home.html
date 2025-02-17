@@ -1,40 +1,68 @@
+{% extends "base_authorised.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Posts</title>
-</head>
-<body>
-    {% if user.is_authenticated %}
-        <a href="{% url 'profile' pk=user.username %}" class="btn btn-primary">My Profile</a>
-        <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    {% endif %}
-
-    <ul>
-        <!-- Iterate over object_list -->
-        {% for object in object_list %}
-            <li>
-                {% if object.user.avatar %}
-                    <a href="{% url 'profile' pk=object.user.username %}">
-                        <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
-                    </a>
-                {% else %}
-                    <a href="{% url 'profile' pk=object.user.username %}">
-                        <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
-                    </a>
-                {% endif %}
-
-                <h5 class="mt-0">
-                    <a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a>
-                </h5>
-                <p>{{ object.description }}</p>
-                <!-- Link to Post Detail Page -->
-                <a href="{% url 'post' pk=object.pk %}">View Post</a>
-                <!-- Display Photos -->
-                {% for photo in object.photos.all %}
-                    <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
+{% load humanize %}
+{% block title %}Posts{% endblock %}
+{% block sub_content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                {% for object in object_list %}
+                    <div class="card mb-4" style="border-radius: unset">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                {% if object.user.avatar %}
+                                    <a href="{% url 'profile' pk=object.user.username %}">
+                                        <!--<img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">-->
+                                        {% load cloudinary %}
+                                        {% cloudinary object.user.avatar quality='auto' width=32 height=32 crop="pad" background='gen_fill:ignore-foreground_true'%}
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'profile' pk=object.user.username %}">
+                                        <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">
+                                    </a>
+                                {% endif %}
+                                <strong><a href="{% url 'profile' pk=object.user.username %}" class="text-decoration-none">{{ object.user.username }}</a></strong>
+                            </div>
+                            <a href="{% url 'post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
+                        </div>
+                        <!--<img src="{{ object.photos.first.image.url }}" alt="Post Image" class="card-img-top">-->
+                        {% load cloudinary %}
+                        {% cloudinary object.photos.first.image class='post-image' quality='auto' crop="pad" background='gen_fill:ignore-foreground_true' %}
+                        <div class="card-body">
+                            <p class="card-text">{{ object.description }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <!-- <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p> -->
+                            {% include 'feed/includes/likes_section.html' %}
+                            <h6>Comments</h6>
+                            {% for comment in object.comment_set.all %}
+                                <div class="d-flex align-items-start mb-2">
+                                    <a href="{% url 'profile' pk=comment.user.username %}">
+                                        {% if comment.user.avatar %}
+                                            <!--<img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">-->
+                                            {% load cloudinary %}
+                                            {% cloudinary comment.user.avatar quality='auto' width=24 height=24 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                                        {% else %}
+                                            <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                        {% endif %}
+                                    </a>
+                                    <div>
+                                        <strong><a href="{% url 'profile' pk=comment.user.username %}" class="text-decoration-none">{{ comment.user.username }}</a></strong>
+                                        <p class="mb-0">{{ comment.content }}</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'comment' pk=object.pk %}" class="mt-3">
+                                    {% csrf_token %}
+                                    {{ comment_form.as_p }}
+                                    <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-center">No posts yet.</p>
                 {% endfor %}
                 <!-- Display Comments -->
                 <h6>Comments</h6>

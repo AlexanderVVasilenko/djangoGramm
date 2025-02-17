@@ -20,6 +20,24 @@ from user_profile.forms import AuthorForm, EditProfileForm, BasicSignUpForm, Fin
 from user_profile.models import User
 
 
+class FollowUserView(View):
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user_to_follow = User.objects.get(username=kwargs['username'])
+            request.user.follow(user_to_follow)
+            return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_follow.username}))
+        return HttpResponseRedirect(reverse('login'))
+
+
+class UnfollowUserView(View):
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            user_to_unfollow = User.objects.get(username=kwargs['username'])
+            request.user.unfollow(user_to_unfollow)
+            return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_unfollow.username}))
+        return HttpResponseRedirect(reverse('login'))
+
+
 class LoginView(TemplateView):
     template_name = "user_profile/login.html"
 
@@ -107,11 +125,16 @@ class ResetPasswordView(PasswordResetView):
 
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     template_name = "user_profile/password_reset_confirm.html"
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         form.save()
+        print("Set Password form is valid!")
         return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class SignUpView(CreateView):

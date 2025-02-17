@@ -1,14 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Confirmation Sent</title>
-</head>
-<body>
-    <h1>Email Confirmation Sent</h1>
-    <p>We have emailed you with a confirmation link. Please check your inbox and follow the instructions to complete your registration.</p>
-    <p>If you haven't received the email, you can request another one by <a href="{% url 'reset_password' %}">clicking here</a>.</p>
-    <p>Already confirmed your email? <a href="{% url 'home' %}">Login here</a>.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Email Confirmation Sent{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title">Email Confirmation Sent</h1>
+                        <p class="card-text">
+                            We have emailed you with a confirmation link. Please check your inbox and follow the instructions to complete your registration.
+                        </p>
+                        <p class="card-text">
+                            If you haven't received the email, you can request another one by <a href="{% url 'reset_password' %}">clicking here</a>.
+                        </p>
+                        <p class="card-text">
+                            Already confirmed your email? <a href="{% url 'home' %}">Login here</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

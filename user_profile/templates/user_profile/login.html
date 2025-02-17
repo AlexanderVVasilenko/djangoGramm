@@ -1,15 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>DjangoGramm</title>
-</head>
-<body>
-    <div class="container login-container">
-        <div class="login-box">
-            <h1>DjangoGramm</h1>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Log In{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Log In</h2>
             <form method="post">
                 {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
                 <div class="form-group">
                     {{ form.email_or_username.label_tag }}
                     {{ form.email_or_username }}
@@ -18,12 +30,12 @@
                     {{ form.password.label_tag }}
                     {{ form.password }}
                 </div>
-                <button type="submit" class="btn btn-primary">Log In</button>
+                <button type="submit" class="btn btn-primary btn-block">Log In</button>
             </form>
-        </div>
-        <div class="signup-box">
-            <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+            <div class="text-center mt-3">
+                <a href="{% url 'reset_password' %}">Forgot Password?</a>
+            </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

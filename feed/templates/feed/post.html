@@ -1,58 +1,70 @@
+{% extends "base_authorised.html" %}
+{% load feed_filters %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Post</title>
-</head>
-<body>
-    <a href="{% url 'profile' pk=user.username %}" class="btn btn-primary">My Profile</a>
-    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-    <a href="{% url 'home' %}" class="btn btn-secondary">Feed</a>
-
-    {% if object.user.avatar %}
-        <a href="{% url 'profile' pk=object.user.username %}">
-            <img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" style="width: 64px; height: 64px;">
-        </a>
-    {% else %}
-        <a href="{% url 'profile' pk=object.user.username %}">
-            <img src="{% static 'feed/images/default.png' %}" alt="{{ object.user.name }}" style="width: 64px; height: 64px; border: 4px;">
-        </a>
-    {% endif %}
-    <h5 class="mt-0">
-        <a href="{% url 'profile' pk=object.user.username %}">{{ object.user.username }}</a>
-    </h5>
-    <p>{{ object.description }}</p>
-    <!-- Display Photos -->
-    {% for photo in object.photos.all %}
-        <img src="{{ photo.image.url }}" alt="Post Image" style="width: 468px;">
-    {% endfor %}
-
-    <!-- Display Comments -->
-    <h6>Comments</h6>
-    <ul>
-        {% for comment in object.comment_set.all %}
-            <li>
-                <a href="{% url 'profile' pk=comment.user.username %}">
-                    <img src="{{ comment.user.avatar.url }}" class="mr-3 rounded-circle" alt="{{ comment.user.username }}" style="width: 32px; height: 32px;">
-                </a>
-                <h6>
-                    <a href="{% url 'profile' pk=comment.user.username %}">{{ comment.user.username }}</a>
-                </h6>
-                <p>{{ comment.content }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-
-    <!-- Display Comment Form -->
-    <form method="post" action="{% url 'comment' pk=object.pk %}">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <button type="submit" class="btn btn-primary">Add Comment</button>
-    </form>
-
-    <!-- Display Likes -->
-    <h6>Likes</h6>
-    <p>{{ object.like_set.count }} likes</p>
-</body>
-</html>
+{% block title %}Post{% endblock %}
+{% block sub_content %}
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center row-cols-1">
+            <div class="col-md-10 px-0">
+                <div class="card mb-4" style="border-radius: unset">
+                    <div class="row g-0" style="margin-left: 0; margin-right: 0">
+                        <div class="col-md-7 px-0">
+                            <!-- Display Photos -->
+                            {% for photo in object.photos.all %}
+                                {% load cloudinary %}
+                                {% cloudinary photo.image class='post-image' quality='auto' crop="pad" background='gen_fill:ignore-foreground_true'%}
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-5 d-flex flex-column px-0">
+                            <div class="card-body flex-grow-1">
+                                <div class="d-flex align-items-center mb-3">
+                                    {% if object.user.avatar %}
+                                        {% load cloudinary %}
+                                        {% cloudinary object.user.avatar quality='auto' width=24 height=24 crop="pad" background='gen_fill:ignore-foreground_true'%}
+                                    {% else %}
+                                        <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                    {% endif %}
+                                    <h5 class="mb-0"><a href="{% url 'profile' pk=object.user.username %}" class="text-decoration-none">{{ object.user.username }}</a></h5>
+                                </div>
+                                <p class="card-text">{{ object.description }}</p>
+                                <!-- Display Comments -->
+                                <h6>Comments</h6>
+                                <ul class="list-unstyled">
+                                    {% for comment in object.comment_set.all %}
+                                        <li class="d-flex align-items-start mb-2">
+                                            {% if comment.user.avatar %}
+                                                {% load cloudinary %}
+                                                {% cloudinary comment.user.avatar quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                                            {% else %}
+                                                <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
+                                            {% endif %}
+                                            <div>
+                                                <span class="fw-bold"><a href="{% url 'profile' pk=comment.user.username %}" class="text-decoration-none">{{ comment.user.username }}</a>:</span>
+                                                <span>{{ comment.content }}</span>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <!-- Display Likes
+                                <p class="mb-2"><strong>{{ object.like_set.count }} likes</strong></p> -->
+                                {% include 'feed/includes/likes_section.html' %}
+                                <!-- Display Comment Form -->
+                                {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'comment' pk=object.pk %}" class="d-flex flex-column align-items-start">
+                                        {% csrf_token %}
+                                        <div class="w-100">
+                                            {{ comment_form.content|add_class:"form-control" }}
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-2">Add Comment</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
