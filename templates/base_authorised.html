@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "app_authorised.css" %}">
+    {% block sub_css_files %}
+    {% endblock %}
+{% endblock %}
+
+{% block content %}
+    <script>
+        function toggleDropup() {
+            var dropupMenu = document.querySelector('.dropup-menu');
+            dropupMenu.classList.toggle('d-none');
+        }
+    </script>
+    <div class="d-flex">
+        {% if request.user.is_authenticated %}
+            <div class="sidebar d-flex flex-column justify-content-between position-fixed" style="width: 250px; height: 100vh;">
+                <div class="p-3">
+                    <a class="navbar-brand d-block p-3 text-center" href="{% url "home" %}">DjangoGramm</a>
+                    <a href="{% url "home" %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Home</a>
+                    <a href="#" class="nav-link btn btn-outline-primary d-block w-100 text-center">Search</a>
+                    <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Profile</a>
+                </div>
+                <div class="dropup-container dropdown p-3 text-center position-relative">
+                    <button class="nav-link btn btn-outline-primary d-block w-100 text-center dropup-toggle" onclick="toggleDropup()">More</button>
+                    <div class="dropup-menu bg-light d-none">
+                        <a href="{% url 'settings' %}" class="d-block py-1 btn btn-outline-primary">Edit Profile</a>
+                        <a href="{% url 'logout' %}" class="d-block py-1 btn btn-outline-primary">Logout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="content-container flex-grow-1 p-4" style="margin-left: 250px;">
+                {% block sub_content %}
+                {% endblock %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

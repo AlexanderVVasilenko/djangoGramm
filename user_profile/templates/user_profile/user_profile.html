@@ -1,17 +1,59 @@
-<h1>{{ user.username }}'s Profile</h1>
-
-  {% if is_owner %}
-    <a href="{% url 'settings' %}" class="btn btn-primary">Edit Profile</a>
-    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
-  {% endif %}
-
-  <h2>Posts</h2>
-  <ul>
-    {% for post in posts %}
-      <li>
-        <img src="{{ post.photos.first.image.url }}" alt="Post Image" style="width: 307.67px; height: 307.67px">
-        <a href="{% url 'post' pk=post.pk %}">View Post</a>
-      </li>
-
-    {% endfor %}
-  </ul>
+{% extends "base_authorised.html" %}
+{% load static %}
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+{% block sub_content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3 text-center">
+            <div class="profile-avatar mb-3">
+                {% if user.avatar and user.avatar.url %}
+                    {% load cloudinary %}
+                    {% cloudinary user.avatar quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                    <!--<img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle img-fluid">-->
+                {% else %}
+                    <img src="{% static 'feed/images/default.png' %}" alt="{{ user.username }}" class="rounded-circle img-fluid">
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex align-items-center">
+                <h2 class="me-3 mb-0">{{ user.username }}</h2>
+                {% if is_owner %}
+                    <a href="{% url 'settings' %}" class="btn btn-outline-primary">Edit Profile</a>
+                {% else %}
+                    {% if request.user in user.followers.all %}
+                        <form method="post" action="{% url 'unfollow' user.username %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-secondary">Unfollow</button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'follow' user.username %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Follow</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="mt-3">
+                <p>{{ user.bio }}</p>
+            </div>
+            <div class="mt-3 d-flex gap-3">
+                <span><strong>{{ user.post_set.count }}</strong> posts</span>
+                <span><strong>{{ user.followers.count }}</strong> followers</span>
+                <span><strong>{{ user.following.count }}</strong> following</span>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        {% for post in posts %}
+            <div class="col-md-4 mb-4">
+                <a href="{% url 'post' pk=post.pk %}">
+                    <!--<img src="{{ post.photos.first.image.url }}" alt="Post Image" class="img-fluid">-->
+                    {% load cloudinary %}
+                    {% cloudinary post.photos.first.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

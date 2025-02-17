@@ -1,12 +1,12 @@
 from django.contrib import auth
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView, TemplateView
 
 from feed.forms import CommentForm
-from feed.models import Post
+from feed.models import Post, Like
 from user_profile.forms import AuthorForm
 
 
@@ -24,15 +24,23 @@ class HomePageView(TemplateView):
     template_name = 'feed/home.html'
     context_object_name = 'object_list'
 
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            following_users = self.request.user.following.all()
+            return Post.objects.filter(user__in=following_users)
+        return Post.objects.none()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-            posts = Post.objects.all()
-            context['object_list'] = posts
+            # posts = Post.objects.all()
+            context['object_list'] = self.get_queryset()
             context['user'] = self.request.user
             context['comment_form'] = CommentForm()
             form = AuthorForm()
             context['form'] = form
+        else:
+            context['object_list'] = []
         return context
 
     def get_template_names(self):
@@ -83,3 +91,28 @@ class CreateCommentView(View):
             'comment_form': form,
         }
         return render(request, 'feed/post.html', context)
+
+
+class ToggleLikeView(View):
+    def post(self, request, *args, **kwargs):
+        post_id = self.kwargs.get('pk')
+        post = Post.objects.get(pk=post_id)
+
+        like = post.likes.filter(user=request.user)
+        if like.exists():
+            like.delete()
+            liked = False
+        else:
+            post.like_post(request.user)
+            liked = True
+
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({
+                "liked": liked,
+                "post_id": post_id,
+                "message": "You have successfully liked",
+                "liked_count": post.likes.count()
+            })
+
+        refer = request.META.get('HTTP_REFERER', reverse("home"))
+        return HttpResponseRedirect(refer)
