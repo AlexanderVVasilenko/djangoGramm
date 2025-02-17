@@ -135,8 +135,8 @@ EMAIL_DEBUG = True
 
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dhhf8apic',
-    'API_KEY': '317263658894723',
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
     'API_SECRET': os.getenv('API_SECRET')
 }
 
