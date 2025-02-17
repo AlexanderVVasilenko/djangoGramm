@@ -1,1 +1,1 @@
-web: gunicorn djangoGramm.wsgi --log-file -
+web: gunicorn djangoGramm.wsgi:application
