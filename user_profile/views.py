@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
-from django.views.generic import TemplateView, UpdateView, CreateView, DetailView, RedirectView
+from django.views.generic import TemplateView, UpdateView, CreateView, DetailView, RedirectView, FormView
 
 from djangoGramm import settings
 from feed.models import Post
@@ -26,7 +26,7 @@ class FollowUserView(View):
             user_to_follow = User.objects.get(username=kwargs['username'])
             request.user.follow(user_to_follow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_follow.username}))
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('home'))
 
 
 class UnfollowUserView(View):
@@ -35,38 +35,7 @@ class UnfollowUserView(View):
             user_to_unfollow = User.objects.get(username=kwargs['username'])
             request.user.unfollow(user_to_unfollow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_unfollow.username}))
-        return HttpResponseRedirect(reverse('login'))
-
-
-class LoginView(TemplateView):
-    template_name = "user_profile/login.html"
-
-    def get(self, request, *args, **kwargs):
-        form = AuthorForm()
-        return render(request, self.template_name, {"form": form})
-
-    def post(self, request, *args, **kwargs):
-        form = AuthorForm(request.POST)
-        print("Form errors:", form.errors)
-        print(form.cleaned_data)
-        if form.is_valid():
-            print(form)
-            email_or_username = form.cleaned_data["email_or_username"]
-            password = form.cleaned_data["password"]
-            if "@" in str(email_or_username):
-                user = authenticate(request, email=email_or_username, password=password)
-            else:
-                user = authenticate(request, username=email_or_username, password=password)
-
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                print("Logged in successfully")
-                return HttpResponseRedirect(reverse('my_profile', kwargs={'my_username': user.username}))
-            else:
-                form.add_error(None, "Invalid username or password")
-
-        return render(request, self.template_name, {"form": form})
+        return HttpResponseRedirect(reverse('home'))
 
 
 class ProfileView(LoginRequiredMixin, DetailView):

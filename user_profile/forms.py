@@ -5,7 +5,7 @@ from cloudinary.models import CloudinaryField
 from user_profile.models import User
 
 
-class AuthorForm(forms.ModelForm):
+class AuthorForm(forms.Form):
     email_or_username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Email or Username'}),
         max_length=254
@@ -13,20 +13,6 @@ class AuthorForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
     )
-
-    def clean(self):
-        cleaned_data = super().clean()
-        email_or_username = cleaned_data.get('email_or_username')
-        password = cleaned_data.get('password')
-
-        if not email_or_username or not password:
-            raise forms.ValidationError("All fields are required.")
-
-        return cleaned_data
-
-    class Meta:
-        model = User
-        fields = ["email_or_username", "password"]
 
 
 class EditProfileForm(forms.ModelForm):
