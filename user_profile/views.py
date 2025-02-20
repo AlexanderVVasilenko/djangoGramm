@@ -26,7 +26,7 @@ class FollowUserView(View):
             user_to_follow = User.objects.get(username=kwargs['username'])
             request.user.follow(user_to_follow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_follow.username}))
-        return HttpResponseRedirect(reverse('login'))
+        return HttpResponseRedirect(reverse('home'))
 
 
 class UnfollowUserView(View):
@@ -35,38 +35,7 @@ class UnfollowUserView(View):
             user_to_unfollow = User.objects.get(username=kwargs['username'])
             request.user.unfollow(user_to_unfollow)
             return HttpResponseRedirect(reverse('profile', kwargs={'pk': user_to_unfollow.username}))
-        return HttpResponseRedirect(reverse('login'))
-
-
-class LoginView(FormView):
-    template_name = "user_profile/login.html"
-    form_class = AuthorForm
-
-    def post(self, request):
-        """Handle form submission and authentication."""
-        form = AuthorForm(request.POST)
-        if form.is_valid():
-            email_or_username = form.cleaned_data["email_or_username"]
-            password = form.cleaned_data["password"]
-            user = None
-
-            user_obj = User.objects.filter(email__iexact=email_or_username).first()
-            if user_obj is not None:
-                user = authenticate(
-                    request,
-                    username=user_obj.username,
-                    password=password
-                )
-            else:
-                user = authenticate(request, username=email_or_username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return redirect("home")  # Redirect to homepage after login
-            else:
-                form.add_error(None, "Invalid email/username or password.")  # Show error on form
-
-        return render(request, self.template_name, {"form": form})
+        return HttpResponseRedirect(reverse('home'))
 
 
 class ProfileView(LoginRequiredMixin, DetailView):

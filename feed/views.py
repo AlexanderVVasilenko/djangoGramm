@@ -24,6 +24,13 @@ class HomePageView(TemplateView):
     template_name = 'feed/home.html'
     context_object_name = 'object_list'
 
+    def get(self, request):
+        """Render the login form on GET request."""
+        form = AuthorForm()
+        if not self.request.user.is_authenticated:
+            return render(request, "user_profile/login.html", {"form": form})
+        return super(HomePageView, self).get(request)
+
     def get_queryset(self):
         if self.request.user.is_authenticated:
             following_users = self.request.user.following.all()
