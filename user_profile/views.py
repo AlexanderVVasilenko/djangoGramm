@@ -144,6 +144,7 @@ class SignUpView(FormView):
         user = User(username=username, email=email)
         user.is_active = False
         user.set_password(password)
+        user.save()
         logger.debug(f"New user registered: {email}")
 
         self.send_confirmation_email(user)
@@ -155,23 +156,17 @@ class SignUpView(FormView):
 
     def send_confirmation_email(self, user):
         """Send confirmation email to user with activation link."""
-        try:
-            current_site = get_current_site(self.request)
-            token = default_token_generator.make_token(user)
-            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-            confirm_url = self.request.build_absolute_uri(
-                reverse("confirm_email", kwargs={"uidb64": uidb64, "token": token})
-            )
+        current_site = get_current_site(self.request)
+        token = default_token_generator.make_token(user)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        confirm_url = reverse_lazy('confirm_email', kwargs={'uidb64': uidb64, 'token': token})
 
-            subject = 'Confirm Your Email'
-            message = render_to_string(
-                'user_profile/confirmation_email.html',
-                {'confirm_url': confirm_url, "username": user.username, "domain": current_site.domain})
+        subject = 'Confirm Your Email'
+        message = render_to_string(
+            'user_profile/confirmation_email.html',
+            {'confirm_url': confirm_url, "username": user.username, "domain": current_site.domain})
 
-            send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
-            logger.debug(f"Confirmation email sent to: {user.email}")
-        except Exception as e:
-            logger.error(f"Exception while sending confirmation email: {e}")
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
 
     def redirect_to_confirmation(self):
         """Redirect to the confirmation sent page."""
@@ -192,16 +187,22 @@ class ConfirmEmailView(RedirectView):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            logger.error(f"Invalid UID: {uidb64}")
+            return render(self.request, "user_profile/activation_invalid.html")
 
-            if default_token_generator.check_token(user, token) and user:
-                user.is_active = True
-                user.save()
-                login(self.request, user)
-                return super().get_redirect_url(*args, **kwargs)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return render(self.request, 'user_profile/activation_invalid.html')
-
-        return reverse_lazy('confirmation_failed')
+        if not default_token_generator.check_token(user, token):
+            logger.error(f"Ivalid token: {token}")
+            return super().get_redirect_url(*args, **kwargs)
+        
+        if user.is_active:
+            logger.info(f"User {user.username} as {user.email} has been activated successfully yet.")
+            return super().get_redirect_url(*args, **kwargs)
+        
+        user.is_active = True
+        user.save()
+        login(self.request, user)
+        return super().get_redirect_url(*args, **kwargs)
 
 
 def custom_logout(request):
