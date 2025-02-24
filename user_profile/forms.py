@@ -1,8 +1,15 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 from cloudinary.models import CloudinaryField
+from django.contrib.auth import get_user_model
 
 from user_profile.models import User
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+UserModel = get_user_model()
 
 
 class AuthorForm(forms.Form):
@@ -47,22 +54,31 @@ class EditProfileForm(forms.ModelForm):
         fields = ['username', 'email', 'name', 'bio', 'avatar']
 
 
-class BasicSignUpForm(UserCreationForm):
+class BasicSignUpForm(forms.Form):
     email = forms.EmailField()
     username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
 
-    class Meta:
-        model = User
-        fields = ['username', 'email']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.inactive_user = None  # Store inactive user if found
 
-    def save(self, commit=True):
-        user = super(BasicSignUpForm, self).save(commit=False)
-        user.email = self.cleaned_data.get('email')
-        user.username = self.cleaned_data.get('username')
-        if not commit:
-            return user
-        user.save()
-        return user
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        logger.debug(f"Form object: {self}")
+        existing_user = User.objects.filter(email=email).first()
+
+        if existing_user:
+            logger.debug(f"Found existing user: {existing_user.email} (Active: {existing_user.is_active})")
+            self.inactive_user = existing_user if not existing_user.is_active else None
+
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        logger.debug(f"Username: {cleaned_data.get('username')}")
+        logger.debug(f"Email: {cleaned_data.get('email')}")
+        return cleaned_data
 
 
 class FinalSignUpForm(forms.ModelForm):
@@ -80,3 +96,11 @@ class FinalSignUpForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['name', 'bio', 'avatar']
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and User.objects.filter(email=email).exists():
+            return email
+        raise forms.ValidationError('No such user')

@@ -4,6 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -16,8 +17,12 @@ from django.views.generic import TemplateView, UpdateView, CreateView, DetailVie
 
 from djangoGramm import settings
 from feed.models import Post
-from user_profile.forms import AuthorForm, EditProfileForm, BasicSignUpForm, FinalSignUpForm
+from user_profile.forms import AuthorForm, EditProfileForm, BasicSignUpForm, FinalSignUpForm, CustomPasswordResetForm
 from user_profile.models import User
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class FollowUserView(View):
@@ -67,7 +72,7 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
 
 class ResetPasswordView(PasswordResetView):
     template_name = "user_profile/password_reset.html"
-    form_class = PasswordResetForm
+    form_class = CustomPasswordResetForm
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -106,32 +111,65 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
-class SignUpView(CreateView):
+class SignUpView(FormView):
     form_class = BasicSignUpForm
     template_name = "user_profile/sign_up.html"
     success_url = reverse_lazy('confirmation_sent')
 
+    def get_form_kwargs(self):
+        """Ensure no `instance` argument is passed to `BasicSignUpForm`"""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop("instance", None)
+        return kwargs
+
     def form_valid(self, form):
-        response = super().form_valid(form)
-        user = form.save(commit=False)
+        email = form.cleaned_data.get('email')
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password')
+        logger.debug(f"Processing sign up form: {email}, {username}")
+
+        if form.inactive_user:
+            self.send_confirmation_email(form.inactive_user)
+            return self.redirect_to_confirmation()
+
+        user = User(username=username, email=email)
         user.is_active = False
-        user.save()
+        user.set_password(password)
+        logger.debug(f"New user registered: {email}")
 
         self.send_confirmation_email(user)
-        return response
+        return redirect(self.success_url)
+
+    def form_invalid(self, form):
+        logger.error(f"Invalid form: {form.errors}")
 
     def send_confirmation_email(self, user):
-        current_site = get_current_site(self.request)
-        token = default_token_generator.make_token(user)
-        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-        confirm_url = reverse_lazy('confirm_email', kwargs={'uidb64': uidb64, 'token': token})
+        """Send confirmation email to user with activation link."""
+        try:
+            current_site = get_current_site(self.request)
+            token = default_token_generator.make_token(user)
+            uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+            confirm_url = self.request.build_absolute_uri(
+                reverse("confirm_email", kwargs={"uidb64": uidb64, "token": token})
+            )
 
-        subject = 'Confirm Your Email'
-        message = render_to_string(
-            'user_profile/confirmation_email.html',
-            {'confirm_url': confirm_url, "username": user.username, "domain": current_site.domain})
+            subject = 'Confirm Your Email'
+            message = render_to_string(
+                'user_profile/confirmation_email.html',
+                {'confirm_url': confirm_url, "username": user.username, "domain": current_site.domain})
 
-        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+            send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+            logger.debug(f"Confirmation email sent to: {user.email}")
+        except Exception as e:
+            logger.error(f"Exception while sending confirmation email: {e}")
+
+    def redirect_to_confirmation(self):
+        """Redirect to the confirmation sent page."""
+        return render(
+            self.request,
+            "user_profile/confirmation_sent.html",
+            {"email": self.request.POST.get("email")}
+        )
 
 
 class ConfirmEmailView(RedirectView):
