@@ -8,6 +8,7 @@ from django.views.generic import DetailView, TemplateView
 from feed.forms import CommentForm
 from feed.models import Post, Like
 from user_profile.forms import AuthorForm
+from user_profile.models import User
 
 
 class PostDetailView(DetailView):
@@ -61,10 +62,12 @@ class HomePageView(TemplateView):
         if form.is_valid():
             email_or_username = form.cleaned_data['email_or_username']
             password = form.cleaned_data['password']
-            if "@" in email_or_username:
-                user = auth.authenticate(email=email_or_username, password=password)
-            else:
+            try:
+                if "@" in email_or_username:
+                    email_or_username = User.objects.get(email=email_or_username).username
                 user = auth.authenticate(username=email_or_username, password=password)
+            except User.DoesNotExist:
+                user = None
 
             if user is not None:
                 if user.is_active:
