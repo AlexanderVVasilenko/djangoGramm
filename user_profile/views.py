@@ -132,6 +132,15 @@ class SignUpView(FormView):
             self.send_confirmation_email(form.inactive_user)
             return self.redirect_to_confirmation()
 
+        active_users = [User.objects.filter(email=email, is_active=True).first(),
+                        User.objects.filter(username=username, is_active=True).first()]
+        if any(active_users):
+            if active_users[0]:
+                form.add_error("email", "Email already registered")
+            elif active_users[1]:
+                form.add_error("username", "Username already registered")
+            return self.form_invalid(form)
+
         user = User(username=username, email=email)
         user.is_active = False
         user.set_password(password)
@@ -142,6 +151,7 @@ class SignUpView(FormView):
 
     def form_invalid(self, form):
         logger.error(f"Invalid form: {form.errors}")
+        return self.render_to_response(self.get_context_data(form=form))
 
     def send_confirmation_email(self, user):
         """Send confirmation email to user with activation link."""
