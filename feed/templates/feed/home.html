@@ -14,7 +14,7 @@
                                     <a href="{% url 'profile' pk=object.user.username %}">
                                         <!--<img src="{{ object.user.avatar.url }}" alt="{{ object.user.username }}" class="rounded-circle me-2" style="width: 32px; height: 32px;">-->
                                         {% load cloudinary %}
-                                        {% cloudinary object.user.avatar quality='auto' width=32 height=32 crop="pad" background='gen_fill:ignore-foreground_true'%}
+                                        {% cloudinary object.user.avatar quality='auto' width=32 height=32 crop="fill"%}
                                     </a>
                                 {% else %}
                                     <a href="{% url 'profile' pk=object.user.username %}">
@@ -41,7 +41,7 @@
                                         {% if comment.user.avatar %}
                                             <!--<img src="{{ comment.user.avatar.url }}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">-->
                                             {% load cloudinary %}
-                                            {% cloudinary comment.user.avatar quality='auto' width=24 height=24 crop="pad" background='gen_fill:ignore-foreground_true' %}
+                                            {% cloudinary comment.user.avatar quality='auto' width=24 height=24 crop="fill" %}
                                         {% else %}
                                             <img src="{% static 'feed/images/default.png' %}" alt="{{ comment.user.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px;">
                                         {% endif %}
