@@ -1,0 +1,14 @@
+{
+  "status": "done",
+  "assets": {
+    "bundle.js": {
+      "name": "bundle.js",
+      "path": "C:\\Users\\Oleksandr\\PycharmProjects\\djangoGramm\\static\\dist\\bundle.js"
+    }
+  },
+  "chunks": {
+    "main": [
+      "bundle.js"
+    ]
+  }
+}

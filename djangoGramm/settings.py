@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "feed",
     'django.contrib.humanize',
     "cloudinary",
+    "webpack_loader"
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,13 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "BUNDLE_DIR_NAME": "dist/",
+        "STATS_FILE": BASE_DIR / "webpack-stats.json"
+    }
+}
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
