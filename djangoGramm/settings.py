@@ -117,7 +117,7 @@ STATICFILES_DIRS = [
 
 WEBPACK_LOADER = {
     "DEFAULT": {
-        "BUNDLE_DIR_NAME": "dist/",
+        "BUNDLE_DIR_NAME": "static/dist/",
         "STATS_FILE": BASE_DIR / "webpack-stats.json"
     }
 }
