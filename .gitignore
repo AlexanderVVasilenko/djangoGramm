@@ -113,3 +113,5 @@ media/
 
 # JetBrains IDEs (e.g., PyCharm)
 .idea/
+
+webpack-stats.json
