@@ -7,7 +7,7 @@ DjangoGramm is a Django-based web application that mimics some functionalities o
 - User registration and authentication
 - Profile creation and editing
 - Image uploading and posting (IN DEVELOPMENT)
-- Interaction with posts (like(IN DEVELOPMENT), comment)
+- Interaction with posts (like, comment)
 - Password reset functionality
 
 ## Installation
@@ -26,12 +26,32 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-4. Start the development server:
+4. Collect static files:
+```bash
+python manage.py collectstatic
+```
+
+5. Install Node.js dependencies:
+```bash
+npm install
+```
+
+6. Ensure Weppack is correctly configured:
+```sh
+mkdir -p static/js && touch static/js/index.js
+```
+
+7. Start Webpack:
+```sh
+npx webpack --watch
+```
+
+8. Start the development server:
 ```bash
 python manage.py runserver
 ```
 
-5. Access the application at [http://localhost:8000](http://localhost:8000) in your web browser.
+8. Access the application at [http://localhost:8000](http://localhost:8000) in your web browser.
 
 ## Usage
 
@@ -55,6 +75,8 @@ pytest
 - Python
 - HTML/CSS
 - JavaScript (IN FUTURE)
+- Webpack
+- Babel
 
 ## Contributing
 
