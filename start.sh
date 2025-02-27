@@ -27,7 +27,7 @@ echo "Collecting static files..."
 python manage.py collectstatic --noinput
 
 echo "Building frontend assets with Webpack..."
-npx webpack --mode production
+npx webpack --mode production -y
 
 echo "Starting Gunicorn server..."
 exec gunicorn djangoGramm.wsgi:application --bind 0.0.0.0:8000 --workers 3
