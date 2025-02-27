@@ -30,8 +30,3 @@ echo "Building frontend assets with Webpack..."
 npm install -D webpack-cli
 npm run build
 npx webpack --mode production
-
-echo "Starting Gunicorn server..."
-exec gunicorn djangoGramm.wsgi:application --bind 0.0.0.0:8000 --workers 3
-
-echo "Deployment completed successfully!"
