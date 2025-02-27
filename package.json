@@ -4,7 +4,8 @@
   "description": "DjangoGramm is a Django-based web application that mimics some functionalities of Instagram. Users can register, create profiles, post images, and interact with other users' posts.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
