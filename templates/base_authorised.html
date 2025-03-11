@@ -3,38 +3,86 @@
 
 {% block css_files %}
     <link rel="stylesheet" href="{% static "app_authorised.css" %}">
-    {% block sub_css_files %}
-    {% endblock %}
+    {% block sub_css_files %}{% endblock %}
 {% endblock %}
 
 {% block content %}
-    <script>
-        function toggleDropup() {
-            var dropupMenu = document.querySelector('.dropup-menu');
-            dropupMenu.classList.toggle('d-none');
-        }
-    </script>
     <div class="d-flex">
         {% if request.user.is_authenticated %}
-            <div class="sidebar d-flex flex-column justify-content-between position-fixed" style="width: 250px; height: 100vh;">
-                <div class="p-3">
-                    <a class="navbar-brand d-block p-3 text-center" href="{% url "home" %}">DjangoGramm</a>
-                    <a href="{% url "home" %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Home</a>
-                    <a href="#" class="nav-link btn btn-outline-primary d-block w-100 text-center">Search</a>
-                    <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary d-block w-100 text-center">Profile</a>
+            <!-- Sidebar -->
+            <div class="d-none d-md-flex flex-column justify-content-between position-fixed sidebar">
+                <div class="p-3 d-flex flex-column gap-3">
+                    <a href="{% url "home" %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
+                        <i class="fas fa-home"></i>
+                        <span class="d-none d-lg-inline">Home</span>
+                    </a>
+                    <a href="#" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
+                        <i class="fas fa-search"></i>
+                        <span class="d-none d-lg-inline">Search</span>
+                    </a>
+                    <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
+                        <i class="fas fa-user"></i>
+                        <span class="d-none d-lg-inline">Profile</span>
+                    </a>
                 </div>
-                <div class="dropup-container dropdown p-3 text-center position-relative">
-                    <button class="nav-link btn btn-outline-primary d-block w-100 text-center dropup-toggle" onclick="toggleDropup()">More</button>
-                    <div class="dropup-menu bg-light d-none">
-                        <a href="{% url 'settings' %}" class="d-block py-1 btn btn-outline-primary">Edit Profile</a>
-                        <a href="{% url 'logout' %}" class="d-block py-1 btn btn-outline-primary">Logout</a>
+
+                <!-- Dropup Menu -->
+                <div class="dropup-container position-relative p-3">
+                    <button class="nav-link btn btn-outline-primary d-block dropup-toggle align-items-center" onclick="toggleDropup()">
+                        <i class="fas fa-bars"></i>
+                        <span class="d-none d-lg-inline">More</span>
+                    </button>
+                    <div id="dropup-menu" class="dropup-menu position-absolute d-none">
+                        <a href="{% url "settings" %}" class="btn btn-outline-primary w-100">Edit Profile</a>
+                        <a href="{% url "logout" %}" class="btn btn-outline-primary w-100">Logout</a>
                     </div>
                 </div>
             </div>
-            <div class="content-container flex-grow-1 p-4" style="margin-left: 250px;">
-                {% block sub_content %}
-                {% endblock %}
+
+            <!-- Main Content -->
+            <div class="content-container flex-grow-1 p-4">
+                {% block sub_content %}{% endblock %}
+            </div>
+
+            <!-- Bottom Navigation for Mobile -->
+            <div class="d-md-none fixed-bottom bg-light py-2 border-top d-flex justify-content-around">
+                <a href="{% url "home" %}" class="text-dark">
+                    <i class="fas fa-home fa-lg"></i>
+                </a>
+                <a href="{% url "profile" pk=request.user.username %}" class="text-dark">
+                    <i class="fas fa-user fa-lg"></i>
+                </a>
             </div>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleDropup() {
+        let dropupMenu = document.querySelector('.dropup-menu');
+        dropupMenu.classList.toggle('d-none');
+
+        {#let moreButton = document.querySelector('.dropup-toggle');#}
+        {##}
+        {#// Toggle display instead of just adding/removing d-none#}
+        {#if (dropupMenu.style.display === 'block') {#}
+        {#    dropupMenu.style.display = 'none';#}
+        {# } else {#}
+        {#    dropupMenu.style.display = 'block';#}
+        {##}
+        {#    // Adjust positioning dynamically#}
+        {#    let buttonRect = moreButton.getBoundingClientRect();#}
+        {#    dropupMenu.style.left = buttonRect.left + "px"#}
+        {#    dropupMenu.style.top = (buttonRect.top - dropupMenu.offsetHeight) + "px";#}
+        {##}
+        {#    // Close when clicking outside#}
+        {#    document.addEventListener('click', function (e) {#}
+        {#        if (!e.target.closest('.dropup-container')) {#}
+        {#            dropupMenu.style.display = 'none';#}
+        {#        }#}
+        {#    }, {once: true});#}
+        {# }#}
+    }
+</script>
 {% endblock %}
