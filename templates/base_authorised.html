@@ -76,27 +76,6 @@
     function toggleDropup() {
         let dropupMenu = document.querySelector('.dropup-menu');
         dropupMenu.classList.toggle('d-none');
-
-        {#let moreButton = document.querySelector('.dropup-toggle');#}
-        {##}
-        {#// Toggle display instead of just adding/removing d-none#}
-        {#if (dropupMenu.style.display === 'block') {#}
-        {#    dropupMenu.style.display = 'none';#}
-        {# } else {#}
-        {#    dropupMenu.style.display = 'block';#}
-        {##}
-        {#    // Adjust positioning dynamically#}
-        {#    let buttonRect = moreButton.getBoundingClientRect();#}
-        {#    dropupMenu.style.left = buttonRect.left + "px"#}
-        {#    dropupMenu.style.top = (buttonRect.top - dropupMenu.offsetHeight) + "px";#}
-        {##}
-        {#    // Close when clicking outside#}
-        {#    document.addEventListener('click', function (e) {#}
-        {#        if (!e.target.closest('.dropup-container')) {#}
-        {#            dropupMenu.style.display = 'none';#}
-        {#        }#}
-        {#    }, {once: true});#}
-        {# }#}
     }
 </script>
 {% endblock %}
