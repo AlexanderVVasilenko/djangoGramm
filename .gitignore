@@ -4,3 +4,6 @@ __pycache__/
 staticfiles/
 node_modules/
 webpack-stats.json
+dist/
+static/js/*.bundle.js
+.idea/

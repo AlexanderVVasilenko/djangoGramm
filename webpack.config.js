@@ -42,5 +42,4 @@ module.exports = {
             path: path.resolve(__dirname),
             filename: 'webpack-stats.json'})
     ],
-    mode: 'development'
 }

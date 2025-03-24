@@ -1,0 +1,31 @@
+@media (max-width: 767px) {
+    .profile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+    }
+
+    .profile-username {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .edit-profile-btn {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+    }
+}
