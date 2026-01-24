@@ -7,3 +7,4 @@ webpack-stats.json
 dist/
 static/js/*.bundle.js
 .idea/
+*.pyc
