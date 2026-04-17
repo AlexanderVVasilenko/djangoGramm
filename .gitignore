@@ -8,3 +8,5 @@ dist/
 static/js/*.bundle.js
 .idea/
 *.pyc
+db.sqlite3
+media/
