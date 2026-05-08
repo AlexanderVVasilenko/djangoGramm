@@ -14,7 +14,7 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.description
+        return f"{self.user} - {self.description}"
 
     def like_post(self, user):
         Like.objects.create(post=self, user=user)
@@ -24,13 +24,19 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
+    reply_to = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='replies')
 
     def __str__(self):
-        return str(self.user) + self.content
+        return f"{self.user.username}: {self.content}"
 
 
 class Like(models.Model):
@@ -48,4 +54,4 @@ class Like(models.Model):
 class Photo(models.Model):
     post = models.ForeignKey(Post, related_name="photos", on_delete=models.CASCADE)
     image = CloudinaryField('image')
-    index = PositiveSmallIntegerField()
+    index = PositiveSmallIntegerField(default=0)

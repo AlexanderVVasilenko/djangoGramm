@@ -23,7 +23,7 @@
                                 {% endif %}
                                 <strong><a href="{% url 'profile' pk=object.user.username %}" class="text-decoration-none">{{ object.user.username }}</a></strong>
                             </div>
-                            <a href="{% url 'post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
+                            <a href="{% url 'feed:post' pk=object.pk %}" class="text-muted text-decoration-none">{{ object.created|naturaltime }}</a>
                         </div>
                         <!--<img src="{{ object.photos.first.image.url }}" alt="Post Image" class="card-img-top">-->
                         {% load cloudinary %}
@@ -53,7 +53,7 @@
                                 </div>
                             {% endfor %}
                             {% if user.is_authenticated %}
-                                <form method="post" action="{% url 'comment' pk=object.pk %}" class="mt-3">
+                                <form method="post" action="{% url 'feed:comment' pk=object.pk %}" class="mt-3">
                                     {% csrf_token %}
                                     {{ comment_form.as_p }}
                                     <button type="submit" class="btn btn-primary btn-sm">Submit</button>

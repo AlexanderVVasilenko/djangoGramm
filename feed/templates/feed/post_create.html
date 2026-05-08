@@ -1,0 +1,18 @@
+{% extends "base_authorised.html" %}
+
+{% block sub_content %}
+    <div class="container">
+    <h2>Create Post</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% if form.errors %}
+            <div class="alert alert-danger">
+            {{ form.errors }}
+            </div>
+        {% endif %}
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Post</button>
+    </form>
+    </div>
+{% endblock %}

@@ -1,14 +1,44 @@
+# feed/views.py
+
 from django.contrib import auth
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, CreateView
 
-from feed.forms import CommentForm
-from feed.models import Post, Like
+from feed.forms import CommentForm, PostForm
+from feed.models import Post, Photo
 from user_profile.forms import AuthorForm
 from user_profile.models import User
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'feed/post_create.html'
+    success_url = reverse_lazy("feed:home")
+
+    def form_valid(self, form, *args, **kwargs):
+        print(self.request.FILES)
+        form.instance.user = self.request.user
+        self.object = form.save()
+
+        files = form.cleaned_data.get("images")
+
+        if files:
+            form.instance.user = self.request.user
+            for i, f in enumerate(files):
+                Photo.objects.create(post=self.object, image=f, index=i)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        print("Errors in form:", form.errors)
+        print("Data у FILES:", self.request.FILES)
+        print("Files in form:", form.files)  # Має бути не порожнім!
+        print("Errors:", form.errors)
+        return super().form_invalid(form)
 
 
 class PostDetailView(DetailView):
@@ -34,8 +64,9 @@ class HomePageView(TemplateView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            following_users = self.request.user.following.all()
-            return Post.objects.filter(user__in=following_users)
+            user_pks = list(self.request.user.following.values_list('pk', flat=True))
+            user_pks.append(self.request.user.pk)
+            return Post.objects.filter(user__pk__in=user_pks).distinct().order_by('-pk')
         return Post.objects.none()
 
     def get_context_data(self, **kwargs):

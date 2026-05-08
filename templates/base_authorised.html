@@ -12,7 +12,7 @@
             <!-- Sidebar -->
             <div class="d-none d-md-flex flex-column justify-content-between position-fixed sidebar">
                 <div class="p-3 d-flex flex-column gap-3">
-                    <!-- Logo Button for Mediim Screen -->
+                    <!-- Logo Button for Medium Screen -->
                     <a href="/" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3 d-md-flex d-lg-none">
                         <i class="fas fa-camera-retro"></i>
                     </a>
@@ -26,7 +26,7 @@
                     </a>
 
 
-                    <a href="{% url "home" %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
+                    <a href="{% url "feed:home" %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
                         <i class="fas fa-home"></i>
                         <span class="d-none d-lg-inline">Home</span>
                     </a>
@@ -37,6 +37,10 @@
                     <a href="{% url 'profile' pk=request.user.username %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
                         <i class="fas fa-user"></i>
                         <span class="d-none d-lg-inline">Profile</span>
+                    </a>
+                    <a href="{% url "feed:create" %}" class="nav-link btn btn-outline-primary d-flex align-items-center gap-2 p-3">
+                        <i class="fas fa-plus-square"></i>
+                        <span class="d-none d-lg-inline">Create</span>
                     </a>
                 </div>
 
@@ -60,7 +64,7 @@
 
             <!-- Bottom Navigation for Mobile -->
             <div class="d-md-none fixed-bottom bg-light py-2 border-top d-flex justify-content-around">
-                <a href="{% url "home" %}" class="text-dark">
+                <a href="{% url "feed:home" %}" class="text-dark">
                     <i class="fas fa-home fa-lg"></i>
                 </a>
                 <a href="{% url "profile" pk=request.user.username %}" class="text-dark">

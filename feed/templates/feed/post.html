@@ -1,3 +1,5 @@
+<!-- feed/templates/feed/post.html -->
+
 {% extends "base_authorised.html" %}
 {% load feed_filters %}
 {% load static %}
@@ -52,7 +54,7 @@
                                 {% include 'feed/includes/likes_section.html' %}
                                 <!-- Display Comment Form -->
                                 {% if user.is_authenticated %}
-                                    <form method="post" action="{% url 'comment' pk=object.pk %}" class="d-flex flex-column align-items-start">
+                                    <form method="post" action="{% url 'feed:comment' pk=object.pk %}" class="d-flex flex-column align-items-start">
                                         {% csrf_token %}
                                         <div class="w-100">
                                             {{ comment_form.content|add_class:"form-control" }}

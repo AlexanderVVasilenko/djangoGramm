@@ -85,7 +85,7 @@
     <div class="row mt-4">
         {% for post in posts %}
             <div class="col-md-4 mb-4">
-                <a href="{% url 'post' pk=post.pk %}">
+                <a href="{% url 'feed:post' pk=post.pk %}">
                     {% load cloudinary %}
                     {% cloudinary post.photos.first.image quality='auto' width=200 height=200 crop="pad" background='gen_fill:ignore-foreground_true' %}
                 </a>
