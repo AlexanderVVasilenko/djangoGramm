@@ -10,4 +10,5 @@ urlpatterns = [
     path("p/<pk>/comment", views.CreateCommentView.as_view(), name='comment'),
     path("p/<pk>/like", views.ToggleLikeView.as_view(), name='toggle_like'),
     path('create/', views.PostCreateView.as_view(), name='create'),
+    path("search/", views.SearchView.as_view(), name='search'),
 ]

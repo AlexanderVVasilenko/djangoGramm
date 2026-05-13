@@ -6,12 +6,35 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views import View
-from django.views.generic import DetailView, TemplateView, CreateView
+from django.views.generic import ListView, DetailView, TemplateView, CreateView
+from django.db.models import Q, QuerySet
 
 from feed.forms import CommentForm, PostForm
 from feed.models import Post, Photo
 from user_profile.forms import AuthorForm
 from user_profile.models import User
+
+
+class SearchView(ListView):
+    model = User
+    template_name = 'feed/search.html'
+    context_object_name = "users"
+
+    def get_queryset(self):
+        query = self.request.GET.get("q")
+        if query:
+            return User.objects.filter(
+                Q(username__icontains=query) |
+                Q(name__icontains=query)
+            ).distinct()
+
+        return User.objects.none()
+
+    def get_context_data(self, **kwargs):
+        s_context = super().get_context_data(**kwargs)
+        s_context["query"] = self.request.GET.get("q", "")
+        return s_context
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
@@ -103,7 +126,7 @@ class HomePageView(TemplateView):
             if user is not None:
                 if user.is_active:
                     auth.login(request, user)
-                return HttpResponseRedirect(reverse("home"))
+                return HttpResponseRedirect(reverse("feed:home"))
             else:
                 form.add_error(None, "Invalid username or password")
 
@@ -120,12 +143,8 @@ class CreateCommentView(View):
             comment.user = request.user
             comment.post = post
             comment.save()
-            referer = request.META.get('HTTP_REFERER', '')
 
-            if reverse('post', kwargs={'pk': post_id}) in referer:
-                return HttpResponseRedirect(reverse('post', kwargs={'pk': post_id}))
-            elif reverse('home') in referer:
-                return HttpResponseRedirect(reverse('home'))
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('feed:home')))
 
         context = {
             'object': post,
@@ -155,5 +174,5 @@ class ToggleLikeView(View):
                 "liked_count": post.likes.count()
             })
 
-        refer = request.META.get('HTTP_REFERER', reverse("home"))
+        refer = request.META.get('HTTP_REFERER', reverse("feed:home"))
         return HttpResponseRedirect(refer)
